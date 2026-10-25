@@ -3,6 +3,9 @@
 A delivery platform built incrementally for learning and a DevOps portfolio.
 **Current scope: Phase 2 — CI security gates, GHCR publishing, and digest verification.**
 
+Verified [Phase 2 release](https://github.com/prasanthece42/aegis-cicd/actions/runs/40246584982): scans, GHCR push, and digest-pulled HTTP checks passed.
+See the [release report](DOCS/12-phase-2-report.md) for the exact digest and evidence.
+
 ## Key features
 
 - FastAPI `/health` endpoint with a typed JSON contract.

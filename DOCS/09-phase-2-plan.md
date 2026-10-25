@@ -19,14 +19,17 @@ Acceptance status is recorded in DOCS/12-phase-2-report.md after validation.
 
 - [x] Dependency and image scans execute with nonempty package inventories.
 - [x] All CRITICAL vulnerabilities fail the gate, including unfixed findings.
-- [ ] Scanner/download errors fail closed; scan reports are retained on failure.
+- [x] Scanner/download errors fail closed; scan reports are retained on failure.
 - [x] Candidate smoke test passes before publication.
 - [x] PR jobs have no packages:write and cannot publish.
 - [x] SHA-pinned actions and digest-pinned base image validate.
-- [ ] Registry push succeeds for the validated candidate.
-- [ ] Digest-pulled image matches the candidate config and passes HTTP checks.
-- [ ] Release JSON and SBOM retained with workflow/source traceability.
-- [ ] Local and GitHub results documented without claiming signed attestations.
+- [x] Registry push succeeds for the validated candidate.
+- [x] Digest-pulled image matches the candidate config and passes HTTP checks.
+- [x] Release JSON and SBOM retained with workflow/source traceability.
+- [x] Local and GitHub results documented without claiming signed attestations.
 
-Local checks pass. Registry publication and GitHub execution remain blocked pending
-explicit user approval for `ghcr.io/prasanthece42/aegis-cicd`. See DOCS/12.
+Phase 2 is complete. Local checks and [GitHub Release 40246584982](https://github.com/prasanthece42/aegis-cicd/actions/runs/40246584982) passed.
+GHCR publication and digest-pulled HTTP verification succeeded. See DOCS/12.
+Failure handling and PR permission isolation were reviewed in workflow code; an
+intentional vulnerable fixture verified the CRITICAL gate locally. No intentional
+remote scan failure or separate PR event was executed.

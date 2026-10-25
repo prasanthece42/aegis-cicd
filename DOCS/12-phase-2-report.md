@@ -28,7 +28,9 @@ SBOM, and unsigned release metadata are retained as Actions artifacts.
 | Trixie container HTTP / UID | PASS | Real arm64 container healthy and UID 10001 |
 | Scan/config identity | PASS | Compared Trivy metadata with config digest computed from actual archive |
 | Vulnerable fixture | PASS | Django 2.2.0 metadata detected 6 CRITICAL findings; gate returned 1; package never installed |
-| GitHub Release / GHCR | NOT RUN | Automatic approval review blocked the push pending explicit approval for ghcr.io/prasanthece42/aegis-cicd |
+| GitHub Release / GHCR | PASS | [Run 40246584982](https://github.com/prasanthece42/aegis-cicd/actions/runs/40246584982), source commit 9927c761640fa29af3f0190717052f1983ac83eb |
+| Registry digest pull / HTTP | PASS | Pulled image matches candidate and responds correctly on Linux amd64 |
+| Retained release evidence | PASS | Downloaded reports, verified checksums and CycloneDX SBOM |
 
 Noncritical findings are visible and permitted by the explicit Phase 2 policy; this
 is not a production security approval. Counts reflect this scan/database and platform.
@@ -61,11 +63,54 @@ Local account package listing returned HTTP 403 because its OAuth token lacks
 read:packages; the pipeline uses GITHUB_TOKEN instead and does not broaden that token.
 Phase 3 requires a separate user instruction after Phase 2 results are reviewed.
 
-## Publication blocker
+## Verified GitHub release
 
-Automatic approval review rejected the push because it would trigger publication
-to GHCR, a separate external destination not explicitly approved by the user.
-Phase 2 changes are committed locally only. No Phase 2 workflow or GHCR publication
-has executed. To complete this phase, approve pushing these changes to the existing
-private GitHub repository and publishing the validated image to
-`ghcr.io/prasanthece42/aegis-cicd` using the workflow token.
+The user approved publication to `ghcr.io/prasanthece42/aegis-cicd`. Source commit
+`9927c761640fa29af3f0190717052f1983ac83eb` was pushed, and [Release 40246584982](https://github.com/prasanthece42/aegis-cicd/actions/runs/40246584982)
+completed successfully on October 25, 2026 at 20:53 America/Halifax.
+
+| Job | Result | Duration |
+| --- | --- | --- |
+| Lint, tests, dependency scan | PASS | 41 seconds |
+| Build, smoke-test, image scan | PASS | 51 seconds |
+| Publish and verify digest | PASS | 30 seconds |
+
+Verified image reference:
+
+```text
+ghcr.io/prasanthece42/aegis-cicd@sha256:7444f4a7ff7dd99f094543251fe80a16ec1603c346286c0252e0d7b81ac7f421
+```
+
+Platform: `linux/amd64`. Unique tag:
+`ghcr.io/prasanthece42/aegis-cicd:sha-9927c761640fa29af3f0190717052f1983ac83eb-40246584982-1`.
+
+GitHub reports contain the same observed severity totals as the local table above,
+including zero CRITICAL findings. The runner verified source and scan identity,
+authenticated with GITHUB_TOKEN, pushed, pulled by digest, checked the image identity,
+and ran the HTTP/UID smoke test. The workflow retained its SBOM and release.json.
+
+A durable copy of the small release receipt is committed at
+[releases/40246584982.json](releases/40246584982.json). Full reports remain in the
+Actions artifacts; their SHA256 hashes are recorded in the receipt and were checked
+independently after download. These are unsigned records, not signed attestations.
+
+Additional commands executed:
+
+```bash
+git push origin main
+gh run watch 40246584982 --repo prasanthece42/aegis-cicd --exit-status --interval 15
+gh run download 40246584982 --repo prasanthece42/aegis-cicd --name dependency-report-40246584982-1 --dir /tmp/aegis-phase2-40246584982
+gh run download 40246584982 --repo prasanthece42/aegis-cicd --name image-reports-40246584982-1 --dir /tmp/aegis-phase2-40246584982
+gh run download 40246584982 --repo prasanthece42/aegis-cicd --name release-evidence-40246584982-1 --dir /tmp/aegis-phase2-release-40246584982
+```
+
+The final evidence-only documentation commit uses `[skip ci]` to record this completed
+run without publishing another copy solely for a documentation update. The source
+commit tested and published is explicitly recorded above.
+
+No execution blocker remains. Lower-severity findings, unsigned provenance, artifact
+retention limits, and unconfigured branch protection are documented limitations.
+A separate PR-triggered run and an intentionally failing remote scan were not run;
+permission isolation and failure propagation were reviewed in workflow code, with
+the vulnerable-fixture gate tested locally. Next recommended phase is Kind and Helm,
+after explicit user approval. No Phase 3 work has started.
