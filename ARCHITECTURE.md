@@ -1,6 +1,6 @@
 # Aegis CI/CD architecture
 
-## Current implementation — Phase 1
+## Phase 1 foundation
 
 ```mermaid
 flowchart TB
@@ -20,7 +20,24 @@ Lint and tests run before container work. The image contains runtime dependencie
 and application code; tests and developer tools stay outside it. A two-stage build
 copies a virtual environment into a slim runtime running as UID/GID 10001.
 
-## Target architecture — later phases, not implemented
+## Current implementation — Phase 2
+
+```mermaid
+flowchart LR
+    Main[Main push] --> CI[Lint, tests, dependency gate]
+    CI --> Candidate[Build, smoke-test, image gate]
+    Candidate --> Artifact[Run-scoped candidate archive]
+    Artifact --> GHCR[Unique SHA tag in GHCR]
+    GHCR --> Verify[Pull by digest and smoke-test]
+    Verify --> Evidence[Reports, SBOM, release.json]
+```
+
+PRs run CI without publication. Main runs Release, which calls CI and publishes
+only after success. Only the publication job receives packages:write. It uses
+GITHUB_TOKEN; no registry PAT is stored. The Docker base is digest-pinned Trixie.
+The full policy and retained unsigned evidence are documented in DOCS/10 and DOCS/11.
+
+## Target architecture — later deployment phases, not implemented
 
 ```mermaid
 flowchart LR
@@ -35,9 +52,8 @@ flowchart LR
 Use two repositories: `aegis-cicd` for application source and workflows, and
 `aegis-gitops` for charts, environment values, and Argo CD Applications. Create the
 second repository when its phase is approved. CI must never directly deploy application
-resources with kubectl. Argo CD will own reconciliation. Image tags in Phase 1
-identify CI commits but are not registry-enforced immutable references; digest-based
-publication and evidence belong to Phase 2.
+resources with kubectl. Argo CD will own reconciliation. Phase 2 publishes unique commit/run tags and records digest references.
+Later deployment configuration must consume those digests.
 
 DEV will sync automatically; production desired-state changes will require reviewed
 GitOps pull requests and protected branches. Reverting a GitOps commit will request

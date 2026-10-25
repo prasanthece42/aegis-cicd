@@ -1,0 +1,106 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Serialize main releases; unique tags also prevent reruns replacing prior releases.
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+    with:
+      export-candidate: true
+
+  publish:
+    name: Publish and verify digest
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    env:
+      SOURCE_SHA: ${{ github.sha }}
+      SOURCE_REPOSITORY: ${{ github.repository }}
+      RUN_ID: ${{ github.run_id }}
+      RUN_ATTEMPT: ${{ github.run_attempt }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Download this run's validated image
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: candidate
+      - name: Download dependency report
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dependency-report-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports
+      - name: Download image report and SBOM
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: image-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports
+      - name: Load candidate and verify its source identity
+        run: |
+          docker load --input candidate/image.tar
+          python3 scripts/release_evidence.py check-candidate
+          image="ghcr.io/${SOURCE_REPOSITORY,,}"
+          tag="sha-${SOURCE_SHA}-${RUN_ID}-${RUN_ATTEMPT}"
+          echo "IMAGE_NAME=$image" >> "$GITHUB_ENV"
+          echo "IMAGE_TAG=$image:$tag" >> "$GITHUB_ENV"
+          docker tag "aegis-sample:$SOURCE_SHA" "$image:$tag"
+      - name: Authenticate using the short-lived workflow token
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push the validated image and resolve its registry digest
+        run: |
+          docker push "$IMAGE_TAG"
+          docker image inspect "$IMAGE_TAG" > reports/pushed-image.json
+          python3 scripts/release_evidence.py resolve-digest
+      - name: Pull by digest and verify the exact runtime
+        run: |
+          reference=$(cat reports/image-reference.txt)
+          docker pull "$reference"
+          docker image inspect "$reference" > reports/pulled-image.json
+          python3 scripts/release_evidence.py check-pulled
+          bash scripts/verify-container.sh "$reference"
+      - name: Record verified release evidence
+        run: |
+          python3 scripts/release_evidence.py write
+          reference=$(cat reports/image-reference.txt)
+          {
+            echo '### Verified Phase 2 release'
+            echo
+            echo "Image: \`$reference\`"
+            echo
+            echo "Source commit: \`$SOURCE_SHA\`"
+            echo
+            echo 'Scans, SBOM, and unsigned release metadata are in the release-evidence artifact.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Retain release evidence including partial failures
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/
+          retention-days: 30
+          if-no-files-found: warn

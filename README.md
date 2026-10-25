@@ -1,22 +1,26 @@
 # Aegis CI/CD
 
 A delivery platform built incrementally for learning and a DevOps portfolio.
-**Current scope: Phase 1 — sample API, container, and CI.**
+**Current scope: Phase 2 — CI security gates, GHCR publishing, and digest verification.**
 
 ## Key features
 
 - FastAPI `/health` endpoint with a typed JSON contract.
 - Pytest HTTP contract tests and Ruff lint/format gates.
 - Hashed dependency locks and a Python 3.12 non-root container.
-- GitHub Actions builds only after lint and tests pass, then verifies container health.
+- Trivy dependency and image gates block every CRITICAL vulnerability.
+- GitHub Actions publishes the validated candidate to GHCR and verifies a digest pull.
+- Full reports, CycloneDX SBOM, and unsigned release metadata retain traceability.
 
 ## Delivery flow
 
 ```mermaid
 flowchart LR
-    Code[Push or pull request] --> Checks[Ruff and Pytest]
-    Checks --> Build[Docker build]
-    Build --> Verify[Container health and HTTP test]
+    Code[Push or pull request] --> Checks[Ruff, Pytest, dependency scan]
+    Checks --> Build[Docker build and smoke test]
+    Build --> Scan[Image scan and SBOM]
+    Scan --> Publish[Main only: GHCR publish]
+    Publish --> Verify[Digest pull and HTTP test]
 ```
 
 ## Project structure
@@ -24,7 +28,8 @@ flowchart LR
 ```text
 app/                         FastAPI application
 tests/                      HTTP contract tests
-.github/workflows/ci.yml     GitHub CI gate
+.github/workflows/ci.yml     PR checks and shared release validation
+.github/workflows/release.yml Main-only GHCR publication
 scripts/                     Setup and verification commands
 DOCS/                        Numbered learning and operational guides
 ARCHITECTURE.md              Current and target delivery architecture
@@ -44,7 +49,8 @@ requirements.txt             Development dependency lock with hashes
 | Quality | Pytest, HTTPX, Ruff |
 | Container | Docker, Debian slim, non-root UID 10001 |
 | Automation | GitHub Actions |
-| Later approved phases | Trivy, GHCR, Kind, Helm, Argo CD |
+| Security and registry | Trivy, GHCR |
+| Later approved phases | Kind, Helm, Argo CD |
 
 ## Getting started
 
@@ -89,6 +95,11 @@ with a colon-free absolute path if desired. Re-run bootstrap if temporary files 
 | [06 — Acceptance checklist](DOCS/06-acceptance-checklist.md) | Verification status |
 | [07 — Phase 1 report](DOCS/07-phase-1-report.md) | Commands, results, and limitations |
 | [08 — Learning notes](DOCS/08-learning-notes.md) | Enterprise context and interview questions |
+| [09 — Phase 2 plan](DOCS/09-phase-2-plan.md) | Scope and acceptance criteria |
+| [10 — Security policy](DOCS/10-security-policy.md) | Blocking thresholds and trust boundaries |
+| [11 — Release guide](DOCS/11-release-guide.md) | GHCR flow, commands, and learning notes |
+| [12 — Phase 2 report](DOCS/12-phase-2-report.md) | Scan results and release evidence |
 
 Documentation layout adapted from [8hr-MARATHON](https://github.com/d-hackmt/8hr-MARATHON).
-Phase 2 requires explicit approval. No release, deployment, or AWS provisioning runs here.
+Phase 2 releases run on pushes to main. PRs scan and test without publishing.
+See the release guide for scan commands and evidence. No deployment or AWS provisioning runs here.

@@ -15,7 +15,8 @@ The dependency inputs name direct packages. The generated locks name the full
 resolved dependency graph and allowed artifact hashes. The builder installs those
 packages; the runtime image excludes Pytest and Ruff. Running as a non-root user
 limits what a compromised process can modify. Neither hashes nor non-root execution
-replace vulnerability scanning, which is the next phase.
+replace vulnerability scanning. That is now implemented in Phase 2; continue with
+[the release learning guide](11-release-guide.md).
 
 GitHub Actions schedules isolated jobs. `needs: checks` establishes a dependency:
 Docker work starts only if quality checks pass. `contents: read` lets checkout read

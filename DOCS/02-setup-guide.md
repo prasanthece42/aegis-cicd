@@ -27,8 +27,9 @@ git push -u origin main
 This project is now pushed to the private repository `prasanthece42/aegis-cicd`,
 and its first GitHub CI run passed. The commands above document bootstrap for a new
 copy; do not repeat repository creation for the existing remote. Configure branch
-protection to require both jobs. Pull requests run the
-same checks without deployment secrets or registry credentials.
+protection to require both jobs. Pull requests run checks without deployment secrets or registry credentials.
+Phase 2 main pushes now run Release, including GHCR publication; see
+[the release guide](11-release-guide.md) for commands and evidence.
 
 ## Bootstrap the GitOps repository later
 

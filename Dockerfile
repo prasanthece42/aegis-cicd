@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1
-FROM python:3.12.14-slim-bookworm AS builder
+FROM python:3.12.14-slim-trixie@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f AS builder
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1
 WORKDIR /build
 COPY requirements-prod.txt .
 RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --require-hashes -r requirements-prod.txt
 
-FROM python:3.12.14-slim-bookworm AS runtime
+FROM python:3.12.14-slim-trixie@sha256:f77ac9e44ae96ef2c90b8053ea08c31f8be030f824196b0ae4db6d462c84e51f AS runtime
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1

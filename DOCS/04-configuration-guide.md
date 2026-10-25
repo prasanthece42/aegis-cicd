@@ -13,13 +13,17 @@
 | Dockerfile | Builder installs runtime dependencies; runtime copies only the environment and app. Numeric USER avoids root; exec-form CMD allows termination signals to reach Uvicorn. HEALTHCHECK validates HTTP and JSON using Python's standard library. |
 | .dockerignore | Allowlist prevents source-control files, credentials, tests, or virtual environments entering the build context. |
 | .gitignore | Excludes local caches, environments, and secret env files from Git. |
-| .github/workflows/ci.yml | Defines triggers, read-only permissions, CI concurrency, caching, ordered gates, and container smoke checks. |
+| .github/workflows/ci.yml | PR checks and reusable main validation: lint, tests, dependency/image gates, smoke test, and candidate/report artifacts. |
+| .github/workflows/release.yml | Main-only candidate publication, packages:write, digest pull verification, and evidence retention. |
+| scripts/scan-security.sh | Full Trivy reports, inventory detection, SBOM generation, and CRITICAL gate. |
+| scripts/release_evidence.py | Verifies source/config identity, resolves digest, and writes unsigned release metadata. |
+| tests/test_release_evidence.py | Rejects wrong-source, wrong-image, and mutable-reference cases. |
 | scripts/bootstrap-local.sh | Creates a colon-free Python 3.12 virtual environment and installs locked dependencies. |
 | scripts/verify-local.sh | Runs the same lint, format, and test commands as CI. |
 | scripts/verify-container.sh | Starts, verifies, logs, and removes a disposable hardened container. Requires an image argument. |
 | README.md | Entry point, structure, stack, commands, and numbered documentation index. |
 | ARCHITECTURE.md | Shows implemented flow separately from future GitOps delivery. |
-| DOCS/01 through DOCS/08 | Plan, operations, configuration reference, evidence, and teaching material. |
+| DOCS/01 through DOCS/12 | Phase plans, operations, configuration, policy, evidence, and teaching material. |
 
 A Docker HEALTHCHECK only records health; Docker does not automatically restart an
 unhealthy process. Kubernetes probes will be configured in their own phase.
