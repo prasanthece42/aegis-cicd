@@ -1,0 +1,94 @@
+# Aegis CI/CD
+
+A delivery platform built incrementally for learning and a DevOps portfolio.
+**Current scope: Phase 1 — sample API, container, and CI.**
+
+## Key features
+
+- FastAPI `/health` endpoint with a typed JSON contract.
+- Pytest HTTP contract tests and Ruff lint/format gates.
+- Hashed dependency locks and a Python 3.12 non-root container.
+- GitHub Actions builds only after lint and tests pass, then verifies container health.
+
+## Delivery flow
+
+```mermaid
+flowchart LR
+    Code[Push or pull request] --> Checks[Ruff and Pytest]
+    Checks --> Build[Docker build]
+    Build --> Verify[Container health and HTTP test]
+```
+
+## Project structure
+
+```text
+app/                         FastAPI application
+tests/                      HTTP contract tests
+.github/workflows/ci.yml     GitHub CI gate
+scripts/                     Setup and verification commands
+DOCS/                        Numbered learning and operational guides
+ARCHITECTURE.md              Current and target delivery architecture
+Dockerfile                   Multi-stage runtime image
+pyproject.toml               Python, Ruff, and Pytest configuration
+requirements-prod.in         Direct runtime dependency pins
+requirements-prod.txt        Runtime dependency lock with hashes
+requirements.in              Direct development dependency pins
+requirements.txt             Development dependency lock with hashes
+```
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| Application | Python 3.12, FastAPI, Uvicorn |
+| Quality | Pytest, HTTPX, Ruff |
+| Container | Docker, Debian slim, non-root UID 10001 |
+| Automation | GitHub Actions |
+| Later approved phases | Trivy, GHCR, Kind, Helm, Argo CD |
+
+## Getting started
+
+From this repository directory:
+
+```bash
+bash scripts/bootstrap-local.sh
+bash scripts/verify-local.sh
+venv_dir="${AEGIS_VENV_DIR:-${TMPDIR:-/tmp}/aegis-cicd-venv}"
+"$venv_dir/bin/uvicorn" app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+In another terminal:
+
+```bash
+curl --fail http://127.0.0.1:8000/health
+# {"status":"ok"}
+```
+
+Build and verify Docker:
+
+```bash
+docker build -t aegis-sample:phase1 .
+bash scripts/verify-container.sh aegis-sample:phase1
+```
+
+Setup requires Python 3.12 and access to PyPI. Container checks require Docker,
+Python 3, and curl. The virtual environment lives outside the repository because
+Python venv rejects this workspace's colon-containing path. Override AEGIS_VENV_DIR
+with a colon-free absolute path if desired. Re-run bootstrap if temporary files are removed.
+
+## Documentation index
+
+| Guide | What it covers |
+| --- | --- |
+| [Architecture](ARCHITECTURE.md) | Current scope and future repository boundary |
+| [01 — Implementation plan](DOCS/01-implementation-plan.md) | Ordered Phase 1 work |
+| [02 — Setup guide](DOCS/02-setup-guide.md) | Local execution and GitHub bootstrap |
+| [03 — Pipeline flow](DOCS/03-pipeline-flow.md) | Jobs, permissions, and failures |
+| [04 — Configuration guide](DOCS/04-configuration-guide.md) | Every major file explained |
+| [05 — Troubleshooting](DOCS/05-troubleshooting.md) | Common failures and recovery |
+| [06 — Acceptance checklist](DOCS/06-acceptance-checklist.md) | Verification status |
+| [07 — Phase 1 report](DOCS/07-phase-1-report.md) | Commands, results, and limitations |
+| [08 — Learning notes](DOCS/08-learning-notes.md) | Enterprise context and interview questions |
+
+Documentation layout adapted from [8hr-MARATHON](https://github.com/d-hackmt/8hr-MARATHON).
+Phase 2 requires explicit approval. No release, deployment, or AWS provisioning runs here.
