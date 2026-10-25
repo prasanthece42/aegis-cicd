@@ -24,9 +24,10 @@ git remote add origin https://github.com/YOUR_ACCOUNT/aegis-cicd.git
 git push -u origin main
 ```
 
-The implementation initializes a local main branch but does not create a remote,
-commit your files, push code, or claim a GitHub run. After pushing, inspect the Actions
-CI run and configure branch protection to require both jobs. Pull requests run the
+This project is now pushed to the private repository `prasanthece42/aegis-cicd`,
+and its first GitHub CI run passed. The commands above document bootstrap for a new
+copy; do not repeat repository creation for the existing remote. Configure branch
+protection to require both jobs. Pull requests run the
 same checks without deployment secrets or registry credentials.
 
 ## Bootstrap the GitOps repository later

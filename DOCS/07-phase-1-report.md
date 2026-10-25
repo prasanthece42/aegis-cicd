@@ -5,8 +5,8 @@ Date: October 25, 2026 (America/Halifax).
 ## Architecture and files
 
 Application source → Ruff/Pytest → Docker build → running-container HTTP verification.
-The application is a separate local Git repository on main. No remote or commits
-were created. See the README project tree and configuration guide for the complete
+The application is a separate Git repository on main, pushed to the private
+GitHub repository `prasanthece42/aegis-cicd`. See the README project tree and configuration guide for the complete
 file inventory and each file's purpose. Numbered DOCS guides, root ARCHITECTURE.md,
 and root Dockerfile follow the user-selected reference repository's format.
 
@@ -52,8 +52,8 @@ The locally downloaded actionlint executable is outside the repository.
 | Docker build | PASS | Built real linux/arm64 image |
 | Container health and HTTP | PASS | Docker healthy, host HTTP contract verified |
 | Non-root/hardened runtime | PASS | UID 10001; read-only filesystem; all capabilities dropped |
-| GitHub-hosted CI | NOT RUN | No remote configured or push performed |
-| Linux amd64 execution | NOT RUN | Local Docker host is arm64; GitHub runner still needs verification |
+| GitHub-hosted CI | PASS | [Run 40244734844](https://github.com/prasanthece42/aegis-cicd/actions/runs/40244734844), source commit 4ef9c1626fef70e6b33a5d3a5b597de052a8e888 |
+| Linux amd64 execution | PASS | GitHub ubuntu-24.04 runner built and smoke-tested the image |
 | Vulnerability scans / registry / Kubernetes | NOT RUN | Outside approved Phase 1 scope |
 
 Local image ID (not a published registry digest):
@@ -77,6 +77,22 @@ runs as non-root and the build context is allowlisted. Package and image vulnera
 scanning, base-image digest pinning, GHCR publishing, provenance, and immutable release
 digests are deferred to Phase 2. A SHA image tag alone is not immutable storage.
 
-Next, push the application repository and inspect a real GitHub CI run. After explicit
-approval, implement Phase 2 security policy, Trivy scans, GHCR publishing, and release
-evidence. No Phase 2 code or cloud resources were added.
+GitHub CI passed: Lint and tests completed in 16 seconds; Build and smoke-test
+container completed in 26 seconds. GitHub emitted a non-failing Node.js 20 deprecation
+annotation for the pinned checkout/setup-python actions, which ran under Node.js 24.
+Update their verified SHA pins to Node.js 24-native versions in a maintenance change.
+
+After explicit approval, implement Phase 2 security policy, Trivy scans, GHCR
+publishing, and release evidence. No Phase 2 code or cloud resources were added.
+
+## GitHub execution commands
+
+After the user approved the exact private destination:
+
+```bash
+git add .
+git commit -m 'Build Phase 1 API and CI foundation'
+gh repo create prasanthece42/aegis-cicd --private --source . --remote origin --push
+gh run list --repo prasanthece42/aegis-cicd --limit 3 --json databaseId,headSha,status,conclusion,url
+gh run watch 40244734844 --repo prasanthece42/aegis-cicd --exit-status --interval 10
+```

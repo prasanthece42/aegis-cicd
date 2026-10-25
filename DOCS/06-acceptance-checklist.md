@@ -15,7 +15,7 @@ Verified on October 25, 2026. See the report for commands and limitations.
 - [x] GitHub Actions workflow accepted by actionlint v1.7.12.
 - [x] CI builds only after lint and tests; SHA-pinned actions and read-only token.
 - [x] Local instructions, failure behavior, file guide, and learning notes available.
-- [ ] GitHub-hosted CI execution — NOT RUN: no remote configured or code pushed.
+- [x] GitHub-hosted CI execution — PASS: [run 40244734844](https://github.com/prasanthece42/aegis-cicd/actions/runs/40244734844).
+- [x] GitHub Linux amd64 Docker build and real container smoke test pass.
 
-Phase 1 local implementation is complete. GitHub execution remains an external
-verification step. Phase 2 is not implemented and requires explicit approval.
+Phase 1 implementation and GitHub-hosted verification are complete. Phase 2 is not implemented and requires explicit approval.

@@ -16,5 +16,5 @@
 | GitHub workflow absent | Confirm .github/workflows/ci.yml is at the remote repository root and Actions is enabled. |
 | Container job skipped | Fix the earlier lint, formatting, or test failure first. |
 
-Local verification is evidence for this host only. The actual GitHub runner and its
-Linux amd64 image build still need a pushed workflow run. Nothing deploys in Phase 1.
+Local verification is evidence for this host only. The GitHub Linux amd64 build and
+container smoke test have also passed; see the Phase 1 report for the run link. Nothing deploys in Phase 1.
