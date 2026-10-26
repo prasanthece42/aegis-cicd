@@ -78,16 +78,26 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push the validated image and resolve its registry digest
         run: |
-          docker run --rm --user "$(id -u):$(id -g)" \
-            --volume "${DOCKER_CONFIG:-$HOME/.docker}/config.json:/auth.json:ro" \
-            --volume "$PWD/candidate:/in:ro" \
-            quay.io/skopeo/stable:v1.21.0@sha256:a585e4a3b8a045baa87c7f1b2f940d6d299ebede85ab3f2419d52d2264eefc93 \
-            copy --format oci --authfile /auth.json \
-            docker-archive:/in/image.tar "docker://$IMAGE_TAG"
+          curl --fail --silent --show-error --location \
+            "https://github.com/regclient/regclient/releases/download/v0.11.7/regctl-linux-${{ matrix.arch }}" \
+            --output "$RUNNER_TEMP/regctl"
+          if [[ '${{ matrix.arch }}' == amd64 ]]; then
+            checksum=3737fbbdd791e04e7a831640b681f3397a376498e80e2ad9b1b2d27296f239bc
+          else
+            checksum=9f349bab5c407ac04f3dabf99c7c7a6b0f9e9723c23f2775380e804d02c6dbb9
+          fi
+          echo "$checksum  $RUNNER_TEMP/regctl" | sha256sum --check
+          chmod +x "$RUNNER_TEMP/regctl"
+          docker push "$IMAGE_TAG"
+          docker buildx imagetools inspect "$IMAGE_TAG" --raw > reports/docker-manifest.json
+          python3 scripts/oci_manifest.py < reports/docker-manifest.json > reports/published-oci-manifest.json
+          "$RUNNER_TEMP/regctl" manifest put --content-type application/vnd.oci.image.manifest.v1+json \
+            "$IMAGE_TAG" < reports/published-oci-manifest.json
           digest=$(docker buildx imagetools inspect "$IMAGE_TAG" --format '{{.Manifest.Digest}}')
+          echo "PUBLISHED_DIGEST=$digest" >> "$GITHUB_ENV"
           docker pull "$IMAGE_NAME@$digest"
           docker image inspect "$IMAGE_NAME@$digest" > reports/pushed-image.json
-          python3 scripts/release_evidence.py resolve-digest
+          PUBLISHED_DIGEST="$digest" python3 scripts/release_evidence.py resolve-digest
       - name: Pull by digest and verify the exact runtime
         run: |
           reference=$(cat reports/image-reference.txt)

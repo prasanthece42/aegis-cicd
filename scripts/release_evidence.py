@@ -42,7 +42,14 @@ def validate_candidate(candidate, actual, source_sha, source_url, scan, config_d
         raise ValueError("Image scan does not describe the candidate image")
 
 
-def resolve_reference(repo_digests, image_name):
+def resolve_reference(repo_digests, image_name, expected_digest=None):
+    if expected_digest is not None:
+        expected = image_name + "@" + expected_digest
+        if expected not in repo_digests or not re.fullmatch(
+            r"sha256:[0-9a-f]{64}", expected_digest
+        ):
+            raise ValueError("Expected published OCI digest was not pulled")
+        return expected
     for reference in repo_digests:
         if re.fullmatch(re.escape(image_name) + r"@sha256:[0-9a-f]{64}", reference):
             return reference
@@ -75,7 +82,11 @@ def main(command):
     elif command == "resolve-digest":
         pushed = read_json(REPORTS / "pushed-image.json")[0]
         validate_pulled(candidate, pushed)
-        reference = resolve_reference(pushed.get("RepoDigests", []), os.environ["IMAGE_NAME"])
+        reference = resolve_reference(
+            pushed.get("RepoDigests", []),
+            os.environ["IMAGE_NAME"],
+            os.environ.get("PUBLISHED_DIGEST"),
+        )
         (REPORTS / "image-reference.txt").write_text(reference + "\n")
         print(reference)
     elif command == "check-pulled":
