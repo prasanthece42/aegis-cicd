@@ -20,7 +20,27 @@ for ((attempt=1; attempt<=30; attempt++)); do
     address=$(docker port "$container" 8000/tcp)
     curl --fail --silent --show-error "http://$address/health" \
       | python3 -c 'import json,sys; assert json.load(sys.stdin) == {"status": "ok"}'
-    printf 'PASS: container healthy, UID 10001, host HTTP contract verified\n'
+    python3 - "$address" <<'PYTHON'
+import json
+import sys
+from urllib.request import urlopen
+
+base = "http://" + sys.argv[1]
+for path, content_types in [
+    ("/", {"text/html"}),
+    ("/assets/app.css", {"text/css"}),
+    ("/assets/app.js", {"text/javascript", "application/javascript"}),
+]:
+    with urlopen(base + path, timeout=5) as response:
+        assert response.status == 200, path
+        assert response.headers.get_content_type() in content_types, path
+        assert response.read(), path
+with urlopen(base + "/version", timeout=5) as response:
+    version = json.load(response)
+    assert isinstance(version.get("version"), str) and version["version"]
+print("PASS: UI, browser assets, and version endpoint shipped in the actual container")
+PYTHON
+    printf 'PASS: container healthy, UID 10001, host HTTP contracts verified\n'
     exit 0
   fi
   if [[ "$health" == unhealthy ]]; then break; fi

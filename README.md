@@ -13,6 +13,7 @@ See the [release report](DOCS/12-phase-2-report.md) for the exact digest and evi
 ## Key features
 
 - FastAPI `/health` endpoint with a typed JSON contract.
+- Browser UI at `/` with live health/version checks, served in the same image as the API.
 - Pytest HTTP contract tests and Ruff lint/format gates.
 - Hashed dependency locks and a Python 3.12 non-root container.
 - Trivy dependency and image gates block every CRITICAL vulnerability.
@@ -103,8 +104,12 @@ In another terminal:
 curl --fail http://127.0.0.1:8000/health
 # {"status":"ok"}
 curl --fail http://127.0.0.1:8000/version
-# {"version":"0.2.0"}
+# {"version":"0.3.0"}
 ```
+
+Open http://127.0.0.1:8000/ for the test UI. It requests `/health` and `/version`
+on load and when you select **Run checks**, and displays real responses or errors.
+The page has no external frontend dependencies. Interactive API docs remain at `/docs`.
 
 Build and verify Docker:
 

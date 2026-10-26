@@ -10,5 +10,5 @@ def test_version_contract():
         response = client.get("/version")
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
-    assert response.json() == {"version": "0.2.0"}
+    assert response.json() == {"version": "0.3.0"}
     assert response.json()["version"] == app.version
