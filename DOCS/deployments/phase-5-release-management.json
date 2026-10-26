@@ -1,0 +1,175 @@
+{
+  "recorded_at": "2026-10-26T05:10:35.656726+00:00",
+  "scope": "Phase 5 local Kind release management; production review pending",
+  "repositories": {
+    "application": "https://github.com/prasanthece42/aegis-cicd",
+    "gitops": "https://github.com/prasanthece42/aegis-gitops",
+    "visibility": "PUBLIC; explicitly approved; history scanned before change",
+    "registry": "private GHCR"
+  },
+  "release": {
+    "tag": "release-40259693000-1",
+    "run_id": 40259693000,
+    "source_sha": "51702a46d18ecdec39ba9f94ecbc47a28228d815",
+    "index": "ghcr.io/prasanthece42/aegis-cicd@sha256:e02908653b52ef077cbcde43874edb49449f1bc47af5a7e469e17f0bc8fee8ef",
+    "platforms": [
+      "linux/amd64",
+      "linux/arm64"
+    ],
+    "workflow_conclusion": "success"
+  },
+  "checks": {
+    "application_tests": 20,
+    "gitops_policy_tests": 13,
+    "standalone_ci_run": 40262986427,
+    "latest_helper_release_run": 40261868130,
+    "negative_staging_promotion_run": 40262549462,
+    "negative_staging_conclusion": "failure expected: prior DEV health failed",
+    "gitops_documentation_ci_run": 40272618344
+  },
+  "observations": {
+    "phase5-dev-promoted": {
+      "environment": "dev",
+      "revision": "1bfedb2ff3a1a279aae2eb7106b4d0a8796a59dd",
+      "image": "ghcr.io/prasanthece42/aegis-cicd@sha256:e02908653b52ef077cbcde43874edb49449f1bc47af5a7e469e17f0bc8fee8ef",
+      "state": "success",
+      "argocd": [
+        "Synced",
+        "Healthy",
+        "1bfedb2ff3a1a279aae2eb7106b4d0a8796a59dd"
+      ],
+      "observed_at": "2026-10-26T02:43:29.986239+00:00"
+    },
+    "phase5-staging-promoted": {
+      "environment": "staging",
+      "revision": "ac40770c03aa6b7708d37fb30e5de23adb132544",
+      "image": "ghcr.io/prasanthece42/aegis-cicd@sha256:e02908653b52ef077cbcde43874edb49449f1bc47af5a7e469e17f0bc8fee8ef",
+      "state": "success",
+      "argocd": [
+        "Synced",
+        "Healthy",
+        "ac40770c03aa6b7708d37fb30e5de23adb132544"
+      ],
+      "observed_at": "2026-10-26T02:58:09.413883+00:00"
+    },
+    "phase5-dev-failed": {
+      "environment": "dev",
+      "revision": "84343c38bcbc9437cb234bbf7c92f855aff3a45a",
+      "image": "ghcr.io/prasanthece42/aegis-cicd@sha256:e02908653b52ef077cbcde43874edb49449f1bc47af5a7e469e17f0bc8fee8ef",
+      "state": "failure",
+      "argocd": [
+        "Synced",
+        "Progressing",
+        "84343c38bcbc9437cb234bbf7c92f855aff3a45a"
+      ],
+      "observed_at": "2026-10-26T03:03:30.828452+00:00"
+    },
+    "phase5-dev-recovered": {
+      "environment": "dev",
+      "revision": "48a6e601604213eb66caba60b3f0309ec17e5b23",
+      "image": "ghcr.io/prasanthece42/aegis-cicd@sha256:e02908653b52ef077cbcde43874edb49449f1bc47af5a7e469e17f0bc8fee8ef",
+      "state": "success",
+      "argocd": [
+        "Synced",
+        "Healthy",
+        "48a6e601604213eb66caba60b3f0309ec17e5b23"
+      ],
+      "observed_at": "2026-10-26T03:13:59.672154+00:00"
+    },
+    "phase5-drift": {
+      "before": {
+        "replicas": 1,
+        "ready": 1,
+        "generation": 9
+      },
+      "drift": {
+        "replicas": 3,
+        "ready": 1,
+        "generation": 10
+      },
+      "recovered": {
+        "replicas": 1,
+        "ready": 1,
+        "generation": 11
+      },
+      "result": "Argo restored Git replica count"
+    },
+    "final-dev-after-docs": {
+      "environment": "dev",
+      "revision": "f8607dd173136bd87fb797e7c4d1cb546815f5bf",
+      "image": "ghcr.io/prasanthece42/aegis-cicd@sha256:e02908653b52ef077cbcde43874edb49449f1bc47af5a7e469e17f0bc8fee8ef",
+      "state": "success",
+      "argocd": [
+        "Synced",
+        "Healthy",
+        "f8607dd173136bd87fb797e7c4d1cb546815f5bf"
+      ],
+      "observed_at": "2026-10-26T05:10:01.494260+00:00"
+    }
+  },
+  "failure": {
+    "reason": "OOMKilled",
+    "memory_limit": "8Mi",
+    "old_ready_replica_http": "observed successful /health; no continuous availability guarantee"
+  },
+  "pull_requests": {
+    "dev": 1,
+    "staging": 2,
+    "production_pending": 3,
+    "failure_drill": 4,
+    "rollback": 5,
+    "documentation": 6
+  },
+  "production": {
+    "state": "not deployed; review required",
+    "pr_head": "b35ce64a305fb73d8f756822222e34cad71f2757",
+    "local_sync_negative_test": "refused: no approved merged release PR"
+  },
+  "controls": {
+    "gitops_branches": [
+      "main",
+      "staging",
+      "prod"
+    ],
+    "required_checks": [
+      "chart",
+      "promotion-policy"
+    ],
+    "enforce_admins": true,
+    "production_fresh_independent_human_approval": true,
+    "health_max_age_hours": 24,
+    "ci_cluster_credentials": false,
+    "argo_github_write_credentials": false,
+    "retired_ssh_key_revoked": true,
+    "application_main": {
+      "checks": [
+        "Lint, tests, and dependency scan",
+        "Build, smoke-test, and scan container (amd64)"
+      ],
+      "strict": true,
+      "enforce_admins": true,
+      "reviews": {
+        "url": "https://api.github.com/repos/prasanthece42/aegis-cicd/branches/main/protection/required_pull_request_reviews",
+        "dismiss_stale_reviews": true,
+        "require_code_owner_reviews": false,
+        "require_last_push_approval": false,
+        "required_approving_review_count": 0
+      },
+      "force_push": false,
+      "deletion": false
+    }
+  },
+  "background_bridge": "not started; explicit ongoing-operation approval pending",
+  "limitations": [
+    "All environments are namespaces in local Kind, not cloud production",
+    "Unsigned release and operator health evidence",
+    "Cache preparation and observation require a workstation",
+    "Public source/release bundle; private GHCR",
+    "No AWS resources provisioned"
+  ],
+  "credential_review": {
+    "history_scans": "both passed, zero detected leaks",
+    "exact_publication_scan": "passed, zero detected leaks",
+    "directory_findings": "all four ignored/untracked: kubeconfig private key and public Python GPG_KEY metadata"
+  }
+}

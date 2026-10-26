@@ -1,7 +1,11 @@
 # Aegis CI/CD
 
 A delivery platform built incrementally for learning and a DevOps portfolio.
-**Current scope: Phase 4 — Argo CD reconciles local DEV from the private GitOps repository.**
+**Current scope: Phase 5 — protected release promotion in local Kind. DEV and STAGING verified; PROD awaits human review.**
+
+Start with the [release management guide](DOCS/20-release-management-guide.md) and
+[Phase 5 evidence report](DOCS/21-phase-5-report.md). Both source and GitOps repositories
+are public portfolio repositories; GHCR remains private.
 
 Verified [Phase 2 release](https://github.com/prasanthece42/aegis-cicd/actions/runs/40246584982): scans, GHCR push, and digest-pulled HTTP checks passed.
 See the [release report](DOCS/12-phase-2-report.md) for the exact digest and evidence.
@@ -37,14 +41,17 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    Git[GitOps chart or local values commit] --> Argo[Argo CD]
+    Git[Checked GitOps DEV PR merge] --> Argo[Argo CD]
     Argo --> Kind[Kind DEV deployment]
     Kind --> Drift[Live drift compared with Git]
     Drift --> Argo
 ```
 
-GitOps changes now deploy automatically. Image publication still does not update
-GitOps automatically; that integration remains separate work.
+The local bridge verifies an exact multi-platform OCI bundle and records cache health.
+The GitOps workflow opens a DEV PR with its short-lived repository token. Required checks
+precede merge and Argo auto-sync. Healthy DEV permits STAGING promotion; healthy STAGING
+permits a PROD proposal requiring fresh human review. STAGING/PROD Argo sync is explicit.
+The bridge is currently run one shot; unattended background operation awaits approval.
 
 ## Project structure
 
@@ -76,7 +83,7 @@ requirements.txt             Development dependency lock with hashes
 | Security and registry | Trivy, GHCR |
 | Local deployment | Kind, Kubernetes, Helm |
 | GitOps reconciliation | Argo CD 3.5.6 |
-| Later approved phases | Enterprise promotion and release integration |
+| Release management | Protected GitOps PRs, digest promotion, health gates |
 
 ## Getting started
 
@@ -131,6 +138,9 @@ with a colon-free absolute path if desired. Re-run bootstrap if temporary files 
 | [16 — Phase 4 plan](DOCS/16-phase-4-plan.md) | Argo scope and acceptance |
 | [17 — Argo CD guide](DOCS/17-argocd-guide.md) | Live flow, code, UI access, security, and learning |
 | [18 — Phase 4 report](DOCS/18-phase-4-report.md) | Git-driven sync, self-healing, and revert evidence |
+| [19 — Phase 5 plan](DOCS/19-phase-5-plan.md) | Release management acceptance |
+| [20 — Release management](DOCS/20-release-management-guide.md) | Multi-platform release, code map, promotion and rollback |
+| [21 — Phase 5 report](DOCS/21-phase-5-report.md) | Verified results and pending production review |
 
 Documentation layout adapted from [8hr-MARATHON](https://github.com/d-hackmt/8hr-MARATHON).
 Phase 2 releases run on pushes to main. PRs scan and test without publishing.
