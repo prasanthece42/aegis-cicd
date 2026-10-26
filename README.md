@@ -102,6 +102,8 @@ In another terminal:
 ```bash
 curl --fail http://127.0.0.1:8000/health
 # {"status":"ok"}
+curl --fail http://127.0.0.1:8000/version
+# {"version":"0.2.0"}
 ```
 
 Build and verify Docker:
