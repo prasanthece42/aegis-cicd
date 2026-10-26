@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f5">
+  <title>Aegis · Delivery lab</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/assets/app.css">
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Aegis home">
+      <span class="brand-mark" aria-hidden="true">A</span>
+      <span>Aegis <span class="brand-divider">/</span> <span class="brand-detail">Delivery lab</span></span>
+    </a>
+    <a class="text-link" href="/docs">Explore the API <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow"><span class="small-dot" aria-hidden="true"></span> YOUR TEST APPLICATION</p>
+      <h1 id="page-title">A small app.<br><span>A real release.</span></h1>
+      <p class="intro-copy">See the application your pipeline delivered. Check its health,
+        read its version, and watch your next release arrive here.</p>
+      <div class="intro-actions">
+        <button id="refresh" type="button">Run checks <span aria-hidden="true">↻</span></button>
+        <span id="last-checked" class="muted">Waiting for the first check</span>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Live application checks">
+      <div class="metrics">
+        <article class="card metric-card">
+          <div class="card-heading"><h2>Application health</h2><span class="endpoint">GET /health</span></div>
+          <div id="health-card" class="metric-state" data-tone="pending">
+            <span class="status-dot" aria-hidden="true"></span><p id="health-value">Checking…</p>
+          </div>
+          <p id="health-detail" class="card-description">Contacting the running application.</p>
+          <a class="subtle-link" href="/health">View health response <span aria-hidden="true">↗</span></a>
+        </article>
+        <article class="card metric-card">
+          <div class="card-heading"><h2>Running version</h2><span class="endpoint">GET /version</span></div>
+          <p id="version-value" class="version-number">—</p>
+          <p id="version-detail" class="card-description">Reading the version from the API.</p>
+          <a class="subtle-link" href="/version">View version response <span aria-hidden="true">↗</span></a>
+        </article>
+      </div>
+
+      <article class="card responses-card">
+        <div class="card-heading"><h2>Live responses</h2><span id="overall" class="badge" data-tone="pending">Checking</span></div>
+        <p class="card-description">Real requests to this application, every time you run checks.</p>
+        <div class="response-block">
+          <div class="response-heading"><span>/health</span><span id="health-http">Waiting</span></div>
+          <pre id="health-response">Waiting for a response…</pre>
+        </div>
+        <div class="response-block">
+          <div class="response-heading"><span>/version</span><span id="version-http">Waiting</span></div>
+          <pre id="version-response">Waiting for a response…</pre>
+        </div>
+        <p id="check-message" class="check-message" role="status" aria-live="polite">Checking the API…</p>
+      </article>
+    </section>
+
+    <section class="journey" aria-labelledby="journey-title">
+      <div><p class="eyebrow">FROM COMMIT TO BROWSER</p><h2 id="journey-title">This page is part of the release.</h2></div>
+      <p>The UI and API travel together in one Docker image. After the GitOps change
+        merges, Argo CD deploys that image. This page reads the version actually running.</p>
+      <ol class="pipeline" aria-label="Delivery flow">
+        <li><span>01</span> Code change</li><li><span>02</span> CI &amp; release</li>
+        <li><span>03</span> GitOps PR</li><li><span>04</span> Argo CD</li><li class="pipeline-current"><span>05</span> This application</li>
+      </ol>
+    </section>
+  </main>
+  <footer><span>Aegis · Built to learn, delivered through GitOps.</span><span>Serving from <code id="origin">this application</code></span></footer>
+</body>
+</html>

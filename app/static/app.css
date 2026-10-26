@@ -1,0 +1,83 @@
+:root {
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #172d31;
+  background: #f5f7f5;
+  font-synthesis: none;
+  --green: #176950;
+  --muted: #687b7c;
+  --border: #dce5e0;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+a { color: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible { outline: 3px solid #d79b39; outline-offset: 5px; }
+.site-header, main, footer { width: min(1120px, calc(100% - 64px)); margin-inline: auto; }
+.site-header { height: 94px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); gap: 20px; }
+.brand { display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 700; text-decoration: none; }
+.brand-mark { width: 35px; height: 35px; display: grid; place-items: center; background: #173e35; color: white; border-radius: 10px 10px 10px 2px; font-size: 22px; }
+.brand-divider { margin-inline: 10px; color: #b0beb6; font-weight: 400; }
+.brand-detail { font-size: 15px; font-weight: 450; color: var(--muted); }
+.text-link, .subtle-link { text-underline-offset: 5px; font-size: 13px; font-weight: 550; }
+.text-link { text-decoration: none; }
+.text-link span { margin-left: 8px; }
+.intro { padding: 62px 0 38px; }
+.eyebrow { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 750; letter-spacing: 1.8px; color: var(--green); margin: 0 0 20px; }
+.small-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+h1 { font-size: clamp(40px, 5.2vw, 64px); line-height: 1.09; letter-spacing: -2.5px; font-weight: 650; margin: 0; }
+h1 span { color: var(--green); }
+.intro-copy { max-width: 500px; font-size: 15px; line-height: 1.8; color: var(--muted); margin: 22px 0 24px; }
+.intro-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+button { border: 0; border-radius: 7px; background: #173e35; color: white; padding: 13px 18px; min-height: 44px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+button:hover { background: #245d4e; }
+button:disabled { opacity: .65; cursor: wait; }
+button span { margin-left: 20px; font-size: 17px; }
+.muted { font-size: 12px; color: var(--muted); }
+.workspace { display: grid; grid-template-columns: 1.05fr 1fr; gap: 20px; align-items: stretch; }
+.metrics { display: grid; gap: 16px; }
+.card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 25px 28px; }
+.card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+h2 { margin: 0; font-size: 14px; font-weight: 650; }
+.endpoint { color: var(--muted); font: 10px ui-monospace, SFMono-Regular, Consolas, monospace; }
+.metric-state { display: flex; align-items: center; gap: 11px; margin-top: 18px; }
+.metric-state p { margin: 0; font-size: 30px; letter-spacing: -1px; font-weight: 600; }
+.status-dot { width: 11px; height: 11px; background: #d4ab48; border-radius: 50%; box-shadow: 0 0 0 5px #fbf5e5; flex-shrink: 0; }
+[data-tone="success"] .status-dot { background: #2c946e; box-shadow: 0 0 0 5px #ecf7f0; }
+[data-tone="error"] .status-dot { background: #be4d43; box-shadow: 0 0 0 5px #fff0ed; }
+.card-description { font-size: 12px; line-height: 1.7; color: var(--muted); margin: 11px 0 16px; }
+.subtle-link { font-size: 11px; color: var(--green); }
+.subtle-link span { padding-left: 5px; }
+.version-number { margin: 16px 0 0; font-size: 34px; font-weight: 600; letter-spacing: -1px; }
+.responses-card { display: flex; flex-direction: column; }
+.badge { padding: 5px 9px; border-radius: 5px; font-size: 10px; font-weight: 650; background: #f7f0dc; color: #806324; }
+.badge[data-tone="success"] { color: var(--green); background: #ecf7f0; }
+.badge[data-tone="error"] { color: #a03931; background: #fff0ed; }
+.response-block { background: #f6f8f6; border: 1px solid #e6ece7; border-radius: 7px; padding: 14px 16px; margin: 4px 0 11px; }
+.response-heading { display: flex; justify-content: space-between; gap: 12px; font: 11px ui-monospace, SFMono-Regular, Consolas, monospace; color: #5b726b; }
+.response-heading span:last-child { font-size: 10px; }
+pre { margin: 14px 0 0; font: 12px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; color: #224c3f; white-space: pre-wrap; overflow-wrap: anywhere; }
+.check-message { margin: auto 0 0; padding-top: 5px; font-size: 11px; line-height: 1.6; color: var(--muted); }
+.journey { margin: 42px 0 44px; padding-top: 30px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+.journey .eyebrow { margin-bottom: 12px; font-size: 9px; }
+.journey h2 { font-size: 20px; letter-spacing: -.4px; }
+.journey > p { margin: 0; font-size: 12px; line-height: 1.8; color: var(--muted); }
+.pipeline { grid-column: 1 / -1; padding: 0; margin: 26px 0 0; list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.pipeline li { display: flex; align-items: center; gap: 9px; min-height: 50px; padding: 10px 15px; font-size: 11px; border-right: 1px solid var(--border); }
+.pipeline li:last-child { border: 0; }
+.pipeline li span { color: #7c9187; font: 10px ui-monospace, SFMono-Regular, Consolas, monospace; }
+.pipeline-current { background: #e9f2ec; color: var(--green); font-weight: 650; }
+footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-top: 1px solid var(--border); padding: 22px 0 30px; font-size: 10px; color: var(--muted); }
+footer code { font-size: 10px; overflow-wrap: anywhere; }
+@media (max-width: 700px) {
+  .site-header, main, footer { width: calc(100% - 36px); }
+  .site-header { height: 76px; }
+  .brand-detail, .brand-divider { display: none; }
+  .intro { padding-top: 40px; }
+  h1 { letter-spacing: -1.5px; }
+  .workspace, .journey { grid-template-columns: 1fr; }
+  .card { padding: 22px; }
+  .journey { gap: 18px; }
+  .pipeline { grid-template-columns: 1fr; margin-top: 4px; }
+  .pipeline li { min-height: 42px; border-right: 0; border-bottom: 1px solid var(--border); }
+}
