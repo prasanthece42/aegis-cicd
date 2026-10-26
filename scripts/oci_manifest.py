@@ -12,7 +12,9 @@ def normalize(manifest):
     result["mediaType"] = "application/vnd.oci.image.manifest.v1+json"
     result["config"]["mediaType"] = "application/vnd.oci.image.config.v1+json"
     mappings = {
-        "application/vnd.docker.image.rootfs.diff.tar.gzip": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "application/vnd.docker.image.rootfs.diff.tar.gzip": (
+            "application/vnd.oci.image.layer.v1.tar+gzip"
+        ),
         "application/vnd.docker.image.rootfs.diff.tar": "application/vnd.oci.image.layer.v1.tar",
     }
     for layer in result["layers"]:
