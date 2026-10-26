@@ -36,5 +36,9 @@
     "Native local image, not the published private GHCR amd64 digest",
     "STAGING and PROD rendered only",
     "No high-availability or network-isolation claim"
-  ]
+  ],
+  "gitops_repository": "https://github.com/prasanthece42/aegis-gitops",
+  "gitops_chart_implementation_commit": "3a627f3",
+  "gitops_validation_run": "https://github.com/prasanthece42/aegis-gitops/actions/runs/40249510939",
+  "application_validation_run": "https://github.com/prasanthece42/aegis-cicd/actions/runs/40249322983"
 }

@@ -17,7 +17,9 @@ See the [release report](DOCS/12-phase-2-report.md) for the exact digest and evi
 
 Local Kubernetes DEV is verified with Helm on Kind. Start with the
 [Phase 3 guide](DOCS/14-kubernetes-helm-guide.md); deployment templates live in the
-separate sibling `aegis-gitops` checkout.
+separate [aegis-gitops repository](https://github.com/prasanthece42/aegis-gitops).
+Both [application CI/release](https://github.com/prasanthece42/aegis-cicd/actions/runs/40249322983)
+and [chart validation](https://github.com/prasanthece42/aegis-gitops/actions/runs/40249510939) passed.
 
 ## Delivery flow
 

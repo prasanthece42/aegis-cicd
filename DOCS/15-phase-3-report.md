@@ -15,7 +15,8 @@ DOCS/13 through DOCS/15 and a small deployment receipt. Updated CI to check Bash
 syntax, .gitignore to exclude .local credentials/overrides, README, architecture,
 and the configuration index.
 
-The separate aegis-gitops repository is committed locally as `3a627f3` and contains charts/sample-api with schema and
+The separate [aegis-gitops repository](https://github.com/prasanthece42/aegis-gitops)
+is private and published; chart implementation commit `3a627f3` contains charts/sample-api with schema and
 Deployment/Service/ServiceAccount templates, dev/staging/prod namespaces and values,
 a static-validation GitHub workflow, validation script, README, and numbered guides.
 
@@ -41,7 +42,8 @@ a static-validation GitHub workflow, validation script, README, and numbered gui
 | STAGING / PROD installation | NOT RUN | Rendered only; outside local DEV scope |
 | Private GHCR pull into Kind | NOT RUN | Local native image used; no GHCR registry credential created |
 | Argo CD / Git reconciliation | NOT RUN | Phase 4 not authorized |
-| New GitOps GitHub repository CI | PENDING | Awaiting publication and actual GitHub execution |
+| GitOps GitHub CI | PASS | [Chart run 40249510939](https://github.com/prasanthece42/aegis-gitops/actions/runs/40249510939) |
+| Application GitHub release | PASS | [Release run 40249322983](https://github.com/prasanthece42/aegis-cicd/actions/runs/40249322983); scans, GHCR publication, digest pull and smoke test |
 
 Observed local image:
 
@@ -101,3 +103,30 @@ CI does not deploy application resources. Argo CD will own reconciliation in Pha
 See [deployment receipt](deployments/phase-3-local.json) and
 [learning/run guide](14-kubernetes-helm-guide.md). After Phase 3 publication and review,
 the next recommended phase is local Argo CD, requiring explicit user approval.
+
+## GitHub verification and publication
+
+Application source commit `80df9c4e17f70466f69122506f6cb141260f2d20` passed the actual
+[application release run 40249322983](https://github.com/prasanthece42/aegis-cicd/actions/runs/40249322983).
+Jobs passed in 31s (checks/dependency scan), 46s (image build/test/scan), and 39s
+(publication and digest verification). The release evidence was downloaded and its
+checksums verified; [release receipt](releases/40249322983.json) records the new
+published amd64 digest. This new release does not alter the running native local
+image or automatically change the tracked GitOps environment digest.
+
+After exact-destination approval, the private GitOps repository was created and
+pushed. Source commit `be7ff7df5bd24770b2d55ede1c64cc9f46eff844` passed
+[chart run 40249510939](https://github.com/prasanthece42/aegis-gitops/actions/runs/40249510939).
+This executed static validation only, with no deployment credentials or cluster access.
+
+```bash
+git push origin main
+gh repo create prasanthece42/aegis-gitops --private --source . --remote origin --push
+gh run watch 40249322983 --repo prasanthece42/aegis-cicd --exit-status --interval 15
+gh run watch 40249510939 --repo prasanthece42/aegis-gitops --exit-status --interval 10
+gh run download 40249322983 --repo prasanthece42/aegis-cicd --name release-evidence-40249322983-1 --dir /tmp/aegis-phase3-release-40249322983
+```
+
+The last documentation-only updates use [skip ci] to record completed evidence
+without rerunning publication solely for documentation. Both source commits tested
+on GitHub are named above. No blocker remains for Phase 3. Phase 4 has not started.
