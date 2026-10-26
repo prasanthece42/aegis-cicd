@@ -59,7 +59,14 @@ def sync(environment):
         if not merged:
             raise ValueError("PROD has no approved merged release PR at this revision")
         pr = merged[0]
-        reviews = api(f"repos/{REPO}/pulls/{pr['number']}/reviews?per_page=100")
+        reviews = []
+        page = 1
+        while True:
+            batch = api(f"repos/{REPO}/pulls/{pr['number']}/reviews?per_page=100&page={page}")
+            reviews += batch
+            if len(batch) < 100:
+                break
+            page += 1
         allowed = [
             r
             for r in reviews

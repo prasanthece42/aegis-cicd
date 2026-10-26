@@ -6,6 +6,10 @@ cd "$app_root"
 assert_local_cluster
 [[ -z "$(git -C "$gitops_root" status --porcelain)" ]] || { printf 'GitOps worktree must be clean\n' >&2; exit 1; }
 [[ "$(git -C "$gitops_root" branch --show-current)" == main ]] || { printf 'GitOps checkout must be on main\n' >&2; exit 1; }
+if gh api repos/prasanthece42/aegis-gitops/branches/main/protection >/dev/null 2>&1; then
+  printf 'Protected release branches are active; use the Phase 5 PR and promotion flow\n' >&2
+  exit 1
+fi
 initial_revision=$(git -C "$gitops_root" rev-parse HEAD)
 bash scripts/verify-local-argocd.sh "$initial_revision" 1
 cp reports/argocd-verification.json reports/argocd-before.json

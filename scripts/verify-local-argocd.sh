@@ -38,7 +38,10 @@ while time.monotonic() < deadline:
     healthy &= observed.get('observedGeneration', 0) >= deployment['metadata']['generation']
     errors = [c for c in status.get('conditions', []) if c['type'].endswith('Error')]
     if sync.get('status') == 'Synced' and health == 'Healthy' and revision_ok and replicas_ok and healthy and not errors:
-        if app['spec']['source']['repoURL'] != 'git@github.com:prasanthece42/aegis-gitops.git':
+        if app['spec']['source']['repoURL'] not in {
+            'git@github.com:prasanthece42/aegis-gitops.git',
+            'https://github.com/prasanthece42/aegis-gitops.git',
+        }:
             raise ValueError('Unexpected Argo source repository')
         record = {
             'verified_at': datetime.now(UTC).isoformat(),
