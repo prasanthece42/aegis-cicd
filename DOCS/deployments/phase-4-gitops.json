@@ -1,0 +1,79 @@
+{
+  "phase": 4,
+  "verified_date": "2026-10-25",
+  "timezone": "America/Halifax",
+  "cluster": "aegis-dev",
+  "namespace": "aegis-dev",
+  "application": "sample-api-local",
+  "argocd": {
+    "version": "v3.5.6",
+    "commit": "c2b1e3017e2cec86b122172e861dcd026453ae44",
+    "manifest_sha256": "846c644bc81ce5557dd9048757a9c7353378f25c5eb811c77d32a9e907823599"
+  },
+  "repository": "git@github.com:prasanthece42/aegis-gitops.git",
+  "credential": "Repository-specific read-only SSH deploy key; private key not included",
+  "deployment_tracking_id": "sample-api-local:apps/Deployment:aegis-dev/sample-api",
+  "flow": {
+    "initial": {
+      "verified_at": "2026-10-26T00:43:28.301893+00:00",
+      "application": "sample-api-local",
+      "sync": "Synced",
+      "health": "Healthy",
+      "git_revision": "8c5ef9fc3b2cdae3df7c16e0e260aabb7efc28f4",
+      "replicas": 1,
+      "image": "docker.io/library/aegis-sample@sha256:ca29d52da6d8bcf428b685b98941025deec79d90060772e909449a8795234f00"
+    },
+    "git_change": {
+      "verified_at": "2026-10-26T00:43:51.555456+00:00",
+      "application": "sample-api-local",
+      "sync": "Synced",
+      "health": "Healthy",
+      "git_revision": "25dcd8c5a4543b4034791b3f300263b53f18f4c1",
+      "replicas": 2,
+      "image": "docker.io/library/aegis-sample@sha256:ca29d52da6d8bcf428b685b98941025deec79d90060772e909449a8795234f00"
+    },
+    "self_heal": {
+      "verified_at": "2026-10-26T00:43:58.239357+00:00",
+      "application": "sample-api-local",
+      "sync": "Synced",
+      "health": "Healthy",
+      "git_revision": "25dcd8c5a4543b4034791b3f300263b53f18f4c1",
+      "replicas": 2,
+      "image": "docker.io/library/aegis-sample@sha256:ca29d52da6d8bcf428b685b98941025deec79d90060772e909449a8795234f00"
+    },
+    "git_revert": {
+      "verified_at": "2026-10-26T00:44:47.172733+00:00",
+      "application": "sample-api-local",
+      "sync": "Synced",
+      "health": "Healthy",
+      "git_revision": "6400f50157d53f52eb5b59e18d308395a6d2294d",
+      "replicas": 1,
+      "image": "docker.io/library/aegis-sample@sha256:ca29d52da6d8bcf428b685b98941025deec79d90060772e909449a8795234f00"
+    },
+    "injected_live_replicas": 3
+  },
+  "project_denial": {
+    "result": "passed",
+    "conditions": [
+      {
+        "lastTransitionTime": "2026-10-26T00:45:10Z",
+        "message": "application destination server 'https://kubernetes.default.svc' and namespace 'kube-system' do not match any of the allowed destinations in project 'aegis-local'",
+        "type": "InvalidSpecError"
+      }
+    ],
+    "automated_sync": false
+  },
+  "server_health": {
+    "url": "https://127.0.0.1:8443/healthz",
+    "status": 200,
+    "body": "ok",
+    "tls": "Self-signed certificate accepted only for the loopback test"
+  },
+  "manual_helm_bootstrap": "Rejected after Argo handoff",
+  "limitations": [
+    "Local native arm64 cached image, not a direct GHCR pull",
+    "No CI-to-GitOps image update or production promotion",
+    "Persistent deploy key requires revocation on retirement",
+    "Upstream Argo controller RBAC is broader than the AppProject boundary"
+  ]
+}

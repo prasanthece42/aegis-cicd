@@ -37,7 +37,7 @@ only after success. Only the publication job receives packages:write. It uses
 GITHUB_TOKEN; no registry PAT is stored. The Docker base is digest-pinned Trixie.
 The full policy and retained unsigned evidence are documented in DOCS/10 and DOCS/11.
 
-## Current implementation — Phase 3 local deployment
+## Phase 3 local bootstrap
 
 ```mermaid
 flowchart LR
@@ -52,10 +52,26 @@ flowchart LR
 Only DEV is installed. STAGING/PROD are schema-validated desired-state examples.
 The local arm64 image has its own actual manifest digest; tracked environment values
 reference the published Phase 2 amd64 GHCR digest. An isolated kubeconfig/context
-keeps operations on the named local Kind cluster. Helm currently applies from the
-workstation; no CI job deploys resources and Argo CD has not been installed.
+keeps operations on the named local Kind cluster. This Phase 3 bootstrap applied Helm from the workstation. Phase 4 below
+replaces ongoing manual deployment with Argo CD; CI never deploys application resources.
 
-## Target architecture — Phase 4 and later, not implemented
+## Current implementation — Phase 4 reconciliation
+
+```mermaid
+flowchart LR
+    Git[Private aegis-gitops main] --> Repo[Argo repository server renders Helm]
+    Repo --> Controller[Application controller]
+    Controller --> DEV[Kind aegis-dev workload]
+    DEV --> Drift[Compare with Git; self-heal live drift]
+    Drift --> Controller
+```
+
+Argo uses a read-only repository deploy key, a scoped local project, and an automated
+Application. The chart is rendered with DEV and tracked local native-image values.
+Real Git scaling, live drift repair, and Git revert were verified. Manual workstation
+Helm bootstrap is guarded after handoff. The original Helm release history is historical.
+
+## Target architecture — later release integration, not implemented
 
 ```mermaid
 flowchart LR

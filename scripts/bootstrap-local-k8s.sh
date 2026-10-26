@@ -7,6 +7,12 @@ for tool in docker kind kubectl helm kubeconform trivy python3 rg curl; do
   command -v "$tool" >/dev/null || { printf 'Missing required tool: %s\n' "$tool" >&2; exit 1; }
 done
 [[ -f "$gitops_root/charts/sample-api/Chart.yaml" ]] || { printf 'Missing sibling aegis-gitops checkout\n' >&2; exit 1; }
+# After handoff Argo CD is the reconciler; never overwrite it with workstation Helm.
+if [[ -f "$local_kubeconfig" ]] && "${kube[@]}" --namespace argocd get application.argoproj.io sample-api-local \
+  --ignore-not-found --output name 2>/dev/null | rg -q .; then
+  printf 'Argo CD owns sample-api-local; change the GitOps repository instead of running Helm\n' >&2
+  exit 1
+fi
 # Verify local inputs before spending resources on a cluster.
 bash scripts/verify-local.sh
 bash "$gitops_root/scripts/validate-chart.sh"

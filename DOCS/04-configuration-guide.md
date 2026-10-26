@@ -25,7 +25,9 @@
 | ARCHITECTURE.md | Shows implemented flow separately from future GitOps delivery. |
 | kind/cluster.yaml | Pins the isolated local Kubernetes node image and loopback API endpoint. |
 | scripts/*kind*.sh and scripts/*k8s.sh | Workstation-only cluster bootstrap, validation, recovery, and teardown; see DOCS/14 for every file. |
-| DOCS/01 through DOCS/15 | Phase plans, operations, configuration, policy, evidence, and teaching material. |
+| config/argocd-version.json | Pins Argo CD release/source/manifest hash. |
+| scripts/*argocd*.sh and scripts/verify-gitops-flow.sh | Local Argo setup, scoped repository access, status/HTTP checks, UI forward, and real Git demonstration; see DOCS/17. |
+| DOCS/01 through DOCS/18 | Phase plans, operations, configuration, policy, evidence, and teaching material. |
 
 A Docker HEALTHCHECK only records health; Docker does not automatically restart an
 unhealthy process. Kubernetes probes will be configured in their own phase.

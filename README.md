@@ -1,7 +1,7 @@
 # Aegis CI/CD
 
 A delivery platform built incrementally for learning and a DevOps portfolio.
-**Current scope: Phase 3 — local Kind deployment and a separate Helm/GitOps repository.**
+**Current scope: Phase 4 — Argo CD reconciles local DEV from the private GitOps repository.**
 
 Verified [Phase 2 release](https://github.com/prasanthece42/aegis-cicd/actions/runs/40246584982): scans, GHCR push, and digest-pulled HTTP checks passed.
 See the [release report](DOCS/12-phase-2-report.md) for the exact digest and evidence.
@@ -15,7 +15,8 @@ See the [release report](DOCS/12-phase-2-report.md) for the exact digest and evi
 - GitHub Actions publishes the validated candidate to GHCR and verifies a digest pull.
 - Full reports, CycloneDX SBOM, and unsigned release metadata retain traceability.
 
-Local Kubernetes DEV is verified with Helm on Kind. Start with the
+Local Kubernetes DEV is now reconciled by Argo CD. Start with the
+[Argo CD guide](DOCS/17-argocd-guide.md). The original Kind bootstrap is described in the
 [Phase 3 guide](DOCS/14-kubernetes-helm-guide.md); deployment templates live in the
 separate [aegis-gitops repository](https://github.com/prasanthece42/aegis-gitops).
 Both [application CI/release](https://github.com/prasanthece42/aegis-cicd/actions/runs/40249322983)
@@ -31,6 +32,19 @@ flowchart LR
     Scan --> Publish[Main only: GHCR publish]
     Publish --> Verify[Digest pull and HTTP test]
 ```
+
+## Deployment flow
+
+```mermaid
+flowchart LR
+    Git[GitOps chart or local values commit] --> Argo[Argo CD]
+    Argo --> Kind[Kind DEV deployment]
+    Kind --> Drift[Live drift compared with Git]
+    Drift --> Argo
+```
+
+GitOps changes now deploy automatically. Image publication still does not update
+GitOps automatically; that integration remains separate work.
 
 ## Project structure
 
@@ -61,7 +75,8 @@ requirements.txt             Development dependency lock with hashes
 | Automation | GitHub Actions |
 | Security and registry | Trivy, GHCR |
 | Local deployment | Kind, Kubernetes, Helm |
-| Later approved phases | Argo CD |
+| GitOps reconciliation | Argo CD 3.5.6 |
+| Later approved phases | Enterprise promotion and release integration |
 
 ## Getting started
 
@@ -113,8 +128,11 @@ with a colon-free absolute path if desired. Re-run bootstrap if temporary files 
 | [13 — Phase 3 plan](DOCS/13-phase-3-plan.md) | Local Kubernetes architecture and scope |
 | [14 — Kubernetes and Helm guide](DOCS/14-kubernetes-helm-guide.md) | Setup, code, commands, troubleshooting, and learning |
 | [15 — Phase 3 report](DOCS/15-phase-3-report.md) | Real deployment and recovery evidence |
+| [16 — Phase 4 plan](DOCS/16-phase-4-plan.md) | Argo scope and acceptance |
+| [17 — Argo CD guide](DOCS/17-argocd-guide.md) | Live flow, code, UI access, security, and learning |
+| [18 — Phase 4 report](DOCS/18-phase-4-report.md) | Git-driven sync, self-healing, and revert evidence |
 
 Documentation layout adapted from [8hr-MARATHON](https://github.com/d-hackmt/8hr-MARATHON).
 Phase 2 releases run on pushes to main. PRs scan and test without publishing.
-See the release guide for scan commands and evidence. Local DEV deployment runs
-from workstation scripts only; no GitHub deployment or AWS provisioning runs here.
+See the release guide for scan commands and evidence. Local DEV deployment now follows GitOps changes through Argo CD. Workstation
+scripts bootstrap Argo; GitHub workflows do not deploy to Kubernetes. No AWS provisioning runs here.

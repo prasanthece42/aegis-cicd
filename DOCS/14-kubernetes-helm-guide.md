@@ -1,5 +1,8 @@
 # Phase 3 — Kubernetes and Helm guide
 
+Phase 3 historical bootstrap: after Phase 4 handoff, the manual Helm bootstrap
+refuses to overwrite Argo. Use [the Argo guide](17-argocd-guide.md) for ongoing Git-driven changes.
+
 ## What we built
 
 Kind runs a real Kubernetes control plane and worker processes inside local Docker
