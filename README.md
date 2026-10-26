@@ -1,7 +1,7 @@
 # Aegis CI/CD
 
 A delivery platform built incrementally for learning and a DevOps portfolio.
-**Current scope: Phase 5 — protected release promotion in local Kind. DEV and STAGING verified; PROD awaits human review.**
+**Current scope: Phase 5 — protected release promotion in local Kind. DEV, STAGING and human-approved PROD verified.**
 
 Start with the [release management guide](DOCS/20-release-management-guide.md) and
 [Phase 5 evidence report](DOCS/21-phase-5-report.md). Both source and GitOps repositories
@@ -51,7 +51,8 @@ The local bridge verifies an exact multi-platform OCI bundle and records cache h
 The GitOps workflow opens a DEV PR with its short-lived repository token. Required checks
 precede merge and Argo auto-sync. Healthy DEV permits STAGING promotion; healthy STAGING
 permits a PROD proposal requiring fresh human review. STAGING/PROD Argo sync is explicit.
-The bridge is currently run one shot; unattended background operation awaits approval.
+The approved workstation bridge runs in the background while this workstation and Kind
+are available. It proposes DEV releases; it never approves or synchronizes PROD.
 
 ## Project structure
 

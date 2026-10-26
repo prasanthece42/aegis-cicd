@@ -100,7 +100,7 @@ python3.12 -u -m scripts.watch_local_delivery
 The bridge uses your existing workstation GitHub login; it does not write that credential
 to CI or Argo. It checks every 30 seconds, refreshes cache/health observations after 12
 hours, and fails closed on download, validation, import, or health failures. Background
-startup requires separate user approval. Stop a foreground bridge with Ctrl-C. If started
+startup was separately approved and the bridge is running. Stop a foreground bridge with Ctrl-C. If started
 with a recorded PID, inspect .local/delivery-watch.pid and terminate only that process.
 
 Recreating Kind clears its image store: bootstrap Argo again and rerun the loader. Local
@@ -175,7 +175,7 @@ The existing Phase 4 direct-push demonstration is guarded once protected branche
 | Why was OCI conversion rejected? | Converting format can change manifests or configuration. We preserve config/layer blobs and verify every published digest. |
 | Missing cache health | Run the exact bundle loader for the completed release; do not forge a status or turn off the gate. |
 | Failed/stale prior health | Inspect Argo/runtime, restore Git desired state if necessary, then record fresh real health. |
-| PROD policy red after chart passes | Human approval is missing, withdrawn, self-authored, from a bot, or tied to an older head. |
+| PROD policy red after chart passes | Human approval is missing, withdrawn, self-authored, from a bot, or tied to an older head. After a fresh review, rerun any original failed PR check as well as dispatching fresh validation; GitHub may retain both suites. |
 | Bot PR says action required | Review its diff and approve CI execution if it is the known validation run. This is not PROD approval. |
 | Manual sync says namespace missing | Carry the Application's syncOptions, including CreateNamespace, in the manual Argo operation. |
 | Argo Synced but not Healthy | Git may have applied successfully while the application is crashing or failing probes. Promotion must remain blocked. |

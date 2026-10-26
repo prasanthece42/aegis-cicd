@@ -1,6 +1,6 @@
 {
-  "recorded_at": "2026-10-26T05:10:35.656726+00:00",
-  "scope": "Phase 5 local Kind release management; production review pending",
+  "recorded_at": "2026-10-26T14:04:58.558286+00:00",
+  "scope": "Phase 5 local Kind release management verified including human-approved PROD",
   "repositories": {
     "application": "https://github.com/prasanthece42/aegis-cicd",
     "gitops": "https://github.com/prasanthece42/aegis-gitops",
@@ -25,7 +25,11 @@
     "latest_helper_release_run": 40261868130,
     "negative_staging_promotion_run": 40262549462,
     "negative_staging_conclusion": "failure expected: prior DEV health failed",
-    "gitops_documentation_ci_run": 40272618344
+    "gitops_documentation_ci_run": 40272618344,
+    "production_review_validation_run": 40335801833,
+    "production_original_policy_rerun": 40261889194,
+    "application_documentation_ci_run": 40272827305,
+    "application_documentation_ci_attempt": 2
   },
   "observations": {
     "phase5-dev-promoted": {
@@ -105,6 +109,18 @@
         "f8607dd173136bd87fb797e7c4d1cb546815f5bf"
       ],
       "observed_at": "2026-10-26T05:10:01.494260+00:00"
+    },
+    "phase5-prod-promoted": {
+      "environment": "prod",
+      "revision": "38a294e48dcc77f1331abb7693900b7acbc4721f",
+      "image": "ghcr.io/prasanthece42/aegis-cicd@sha256:e02908653b52ef077cbcde43874edb49449f1bc47af5a7e469e17f0bc8fee8ef",
+      "state": "success",
+      "argocd": [
+        "Synced",
+        "Healthy",
+        "38a294e48dcc77f1331abb7693900b7acbc4721f"
+      ],
+      "observed_at": "2026-10-26T14:03:41.251801+00:00"
     }
   },
   "failure": {
@@ -115,15 +131,19 @@
   "pull_requests": {
     "dev": 1,
     "staging": 2,
-    "production_pending": 3,
     "failure_drill": 4,
     "rollback": 5,
-    "documentation": 6
+    "documentation": 6,
+    "production": 3
   },
   "production": {
-    "state": "not deployed; review required",
-    "pr_head": "b35ce64a305fb73d8f756822222e34cad71f2757",
-    "local_sync_negative_test": "refused: no approved merged release PR"
+    "state": "Synced/Healthy; explicit user-authorized review and deployment",
+    "approved_pr_head": "b35ce64a305fb73d8f756822222e34cad71f2757",
+    "reviewer": "prasanthece42",
+    "reviewed_at": "2026-10-26T14:01:26Z",
+    "merge_sha": "38a294e48dcc77f1331abb7693900b7acbc4721f",
+    "replicas": 3,
+    "local_sync_negative_test": "refused before approved merged release PR"
   },
   "controls": {
     "gitops_branches": [
@@ -159,7 +179,7 @@
       "deletion": false
     }
   },
-  "background_bridge": "not started; explicit ongoing-operation approval pending",
+  "background_bridge": "explicit user approval received; detached background process started and checked alive; PID/log/state in ignored .local",
   "limitations": [
     "All environments are namespaces in local Kind, not cloud production",
     "Unsigned release and operator health evidence",

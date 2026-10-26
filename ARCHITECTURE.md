@@ -88,14 +88,14 @@ Both repositories are public following explicit approval and history credential 
 Argo reads public HTTPS without a repository credential; the former SSH deploy key was
 revoked. GHCR remains private. A workstation bridge verifies public release evidence,
 imports an exact digest-preserving OCI bundle into the local Kind cache, and dispatches
-the GitOps-owned proposal workflow. Background operation is pending explicit approval.
+the GitOps-owned proposal workflow. Background operation was explicitly approved and started.
 
 GitOps main, staging and prod are protected, including administrators. Required chart
 and trusted-main promotion policy checks enforce source release validation, exact digest
 reuse and fresh prior-environment health. Production requires an independent allowlisted
 human approval at the current PR head. DEV reconciles automatically; STAGING/PROD
-require explicit Argo sync. DEV and STAGING are verified; PROD PR #3 remains unapproved
-and undeployed. All namespaces are in local Kind, with no AWS provisioning.
+require explicit Argo sync. DEV, STAGING and PROD are verified; PROD PR #3 was independently approved at its
+exact head after explicit user authorization, merged with required checks, and synced. All namespaces are in local Kind, with no AWS provisioning.
 
 Health statuses are allowlisted operator observations with a 24-hour expiry, not signed
 runtime attestations. Source release evidence is unsigned. CI has no cluster credentials.

@@ -25,7 +25,7 @@ No broad account token may be copied into repository secrets or the cluster.
 - [x] Both image architectures are built, tested, scanned, and published by digest.
 - [x] An OCI bundle's imported digest and actual runtime match release evidence.
 - [x] A validated release produces a GitOps proposal without a persistent PAT.
-- [ ] DEV and STAGING reuse the same digest; PROD proposal is ready but awaits human approval and local deployment.
+- [x] DEV, STAGING and human-approved PROD deployed the same digest with explicit promotion sequencing.
 - [x] Production approval is enforced; missing/stale/self approvals fail closed.
 - [x] Argo policies differ by environment and production revisions are controlled.
 - [x] Drift is observed and corrected through Argo reconciliation.
