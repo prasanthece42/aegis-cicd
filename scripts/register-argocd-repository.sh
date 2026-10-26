@@ -3,6 +3,10 @@
 set -euo pipefail
 umask 077
 cd "$(dirname "$0")/.."
+if [[ "$(gh api repos/prasanthece42/aegis-gitops --jq .private)" == false ]]; then
+  printf 'Public GitOps uses anonymous HTTPS; no deploy key is needed\n'
+  exit 0
+fi
 mkdir -p .local
 chmod 700 .local
 key=.local/argocd-gitops-readonly
