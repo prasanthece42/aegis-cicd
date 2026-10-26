@@ -20,7 +20,7 @@ Lint and tests run before container work. The image contains runtime dependencie
 and application code; tests and developer tools stay outside it. A two-stage build
 copies a virtual environment into a slim runtime running as UID/GID 10001.
 
-## Current implementation — Phase 2
+## Phase 2 release pipeline
 
 ```mermaid
 flowchart LR
@@ -37,7 +37,25 @@ only after success. Only the publication job receives packages:write. It uses
 GITHUB_TOKEN; no registry PAT is stored. The Docker base is digest-pinned Trixie.
 The full policy and retained unsigned evidence are documented in DOCS/10 and DOCS/11.
 
-## Target architecture — later deployment phases, not implemented
+## Current implementation — Phase 3 local deployment
+
+```mermaid
+flowchart LR
+    App[Committed app inputs] --> Scan[Native Docker build and Trivy gate]
+    Scan --> Kind[Load image into Kind]
+    GitOps[Separate aegis-gitops chart and DEV values] --> Helm[Workstation Helm install]
+    Kind --> Deployment[Restricted DEV namespace and Deployment]
+    Helm --> Deployment
+    Deployment --> Service[ClusterIP Service and verified /health]
+```
+
+Only DEV is installed. STAGING/PROD are schema-validated desired-state examples.
+The local arm64 image has its own actual manifest digest; tracked environment values
+reference the published Phase 2 amd64 GHCR digest. An isolated kubeconfig/context
+keeps operations on the named local Kind cluster. Helm currently applies from the
+workstation; no CI job deploys resources and Argo CD has not been installed.
+
+## Target architecture — Phase 4 and later, not implemented
 
 ```mermaid
 flowchart LR
@@ -50,8 +68,7 @@ flowchart LR
 ```
 
 Use two repositories: `aegis-cicd` for application source and workflows, and
-`aegis-gitops` for charts, environment values, and Argo CD Applications. Create the
-second repository when its phase is approved. CI must never directly deploy application
+`aegis-gitops` for charts, environment values, and Argo CD Applications. The second repository is now implemented as a sibling checkout. CI must never directly deploy application
 resources with kubectl. Argo CD will own reconciliation. Phase 2 publishes unique commit/run tags and records digest references.
 Later deployment configuration must consume those digests.
 

@@ -23,7 +23,9 @@
 | scripts/verify-container.sh | Starts, verifies, logs, and removes a disposable hardened container. Requires an image argument. |
 | README.md | Entry point, structure, stack, commands, and numbered documentation index. |
 | ARCHITECTURE.md | Shows implemented flow separately from future GitOps delivery. |
-| DOCS/01 through DOCS/12 | Phase plans, operations, configuration, policy, evidence, and teaching material. |
+| kind/cluster.yaml | Pins the isolated local Kubernetes node image and loopback API endpoint. |
+| scripts/*kind*.sh and scripts/*k8s.sh | Workstation-only cluster bootstrap, validation, recovery, and teardown; see DOCS/14 for every file. |
+| DOCS/01 through DOCS/15 | Phase plans, operations, configuration, policy, evidence, and teaching material. |
 
 A Docker HEALTHCHECK only records health; Docker does not automatically restart an
 unhealthy process. Kubernetes probes will be configured in their own phase.

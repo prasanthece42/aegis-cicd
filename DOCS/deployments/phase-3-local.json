@@ -1,0 +1,40 @@
+{
+  "phase": 3,
+  "verified_date": "2026-10-25",
+  "timezone": "America/Halifax",
+  "cluster": "aegis-dev",
+  "context": "kind-aegis-dev",
+  "namespace": "aegis-dev",
+  "kind_version": "0.33.0",
+  "kubernetes_version": "1.35.8",
+  "helm_version": "4.2.4",
+  "chart": "sample-api-0.1.0",
+  "source_commit": "32952da316d443f514e6bc4aaa0b6f6fd693c520",
+  "image": "docker.io/library/aegis-sample@sha256:ca29d52da6d8bcf428b685b98941025deec79d90060772e909449a8795234f00",
+  "profile": "Native local build; not the published GHCR amd64 release",
+  "platform": "linux/arm64",
+  "desired_replicas": 1,
+  "available_replicas": 1,
+  "http_health": "passed",
+  "uid": 10001,
+  "pod_recovery": {
+    "result": "passed",
+    "before": "sample-api-5cd69bbffd-kcr9d",
+    "after": "sample-api-5cd69bbffd-2pqs9",
+    "same_image": true
+  },
+  "restricted_namespace_privileged_dry_run": "rejected as expected",
+  "scan_severity_counts": {
+    "LOW": 70,
+    "HIGH": 51,
+    "MEDIUM": 100,
+    "UNKNOWN": 4
+  },
+  "rendered_manifest_sha256": "50b0638a6fcfdd5f57987fc6bd3b17cb3850703e59f3fd195dbab5ce0275cd28",
+  "limitations": [
+    "Manual workstation Helm installation, not Argo CD reconciliation",
+    "Native local image, not the published private GHCR amd64 digest",
+    "STAGING and PROD rendered only",
+    "No high-availability or network-isolation claim"
+  ]
+}

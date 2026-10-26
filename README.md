@@ -1,7 +1,7 @@
 # Aegis CI/CD
 
 A delivery platform built incrementally for learning and a DevOps portfolio.
-**Current scope: Phase 2 — CI security gates, GHCR publishing, and digest verification.**
+**Current scope: Phase 3 — local Kind deployment and a separate Helm/GitOps repository.**
 
 Verified [Phase 2 release](https://github.com/prasanthece42/aegis-cicd/actions/runs/40246584982): scans, GHCR push, and digest-pulled HTTP checks passed.
 See the [release report](DOCS/12-phase-2-report.md) for the exact digest and evidence.
@@ -14,6 +14,10 @@ See the [release report](DOCS/12-phase-2-report.md) for the exact digest and evi
 - Trivy dependency and image gates block every CRITICAL vulnerability.
 - GitHub Actions publishes the validated candidate to GHCR and verifies a digest pull.
 - Full reports, CycloneDX SBOM, and unsigned release metadata retain traceability.
+
+Local Kubernetes DEV is verified with Helm on Kind. Start with the
+[Phase 3 guide](DOCS/14-kubernetes-helm-guide.md); deployment templates live in the
+separate sibling `aegis-gitops` checkout.
 
 ## Delivery flow
 
@@ -33,7 +37,8 @@ app/                         FastAPI application
 tests/                      HTTP contract tests
 .github/workflows/ci.yml     PR checks and shared release validation
 .github/workflows/release.yml Main-only GHCR publication
-scripts/                     Setup and verification commands
+scripts/                     Setup, CI, container, and local Kubernetes commands
+kind/                        Pinned local cluster configuration
 DOCS/                        Numbered learning and operational guides
 ARCHITECTURE.md              Current and target delivery architecture
 Dockerfile                   Multi-stage runtime image
@@ -53,7 +58,8 @@ requirements.txt             Development dependency lock with hashes
 | Container | Docker, Debian slim, non-root UID 10001 |
 | Automation | GitHub Actions |
 | Security and registry | Trivy, GHCR |
-| Later approved phases | Kind, Helm, Argo CD |
+| Local deployment | Kind, Kubernetes, Helm |
+| Later approved phases | Argo CD |
 
 ## Getting started
 
@@ -102,7 +108,11 @@ with a colon-free absolute path if desired. Re-run bootstrap if temporary files 
 | [10 — Security policy](DOCS/10-security-policy.md) | Blocking thresholds and trust boundaries |
 | [11 — Release guide](DOCS/11-release-guide.md) | GHCR flow, commands, and learning notes |
 | [12 — Phase 2 report](DOCS/12-phase-2-report.md) | Scan results and release evidence |
+| [13 — Phase 3 plan](DOCS/13-phase-3-plan.md) | Local Kubernetes architecture and scope |
+| [14 — Kubernetes and Helm guide](DOCS/14-kubernetes-helm-guide.md) | Setup, code, commands, troubleshooting, and learning |
+| [15 — Phase 3 report](DOCS/15-phase-3-report.md) | Real deployment and recovery evidence |
 
 Documentation layout adapted from [8hr-MARATHON](https://github.com/d-hackmt/8hr-MARATHON).
 Phase 2 releases run on pushes to main. PRs scan and test without publishing.
-See the release guide for scan commands and evidence. No deployment or AWS provisioning runs here.
+See the release guide for scan commands and evidence. Local DEV deployment runs
+from workstation scripts only; no GitHub deployment or AWS provisioning runs here.
