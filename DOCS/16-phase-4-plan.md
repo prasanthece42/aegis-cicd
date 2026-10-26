@@ -32,7 +32,7 @@ handoff, the manual Helm bootstrap must refuse to mutate the Argo-owned applicat
 - [x] Change the live replica count and observe self-healing to Git desired state.
 - [x] Revert the Git change and verify the original desired state and HTTP health.
 - [x] Verify Argo server loopback access and guard against manual Helm overwrite.
-- [ ] Run application/chart checks on GitHub and record evidence/limitations.
+- [x] Run application/chart checks on GitHub and record evidence/limitations.
 
 Stop after Phase 4. Argo CD becoming the reconciler does not automatically connect
 new CI image publication to GitOps updates; that release integration is still later work.

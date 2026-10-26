@@ -33,7 +33,7 @@ projects, Application, controller config, a local-profile chart validation, and 
 | Local app tests / lint | PASS | 12 tests; existing Starlette/anyio warning remains |
 | GitOps chart checks | PASS | Four profiles, 16 valid native resources, invalid input cases rejected |
 | GitHub setup/change/revert CI | PASS | GitOps runs 40250659921, 40250732778, 40250770351 |
-| Application GitHub CI | PENDING | Awaiting Phase 4 implementation push |
+| Application GitHub CI | PASS | [Release 40251242073](https://github.com/prasanthece42/aegis-cicd/actions/runs/40251242073): source commit 64c86de |
 | Private GHCR pull / production deployment | NOT RUN | Outside this local native-image integration |
 
 The final application is Synced and Healthy with one replica. Its image remains:
@@ -81,3 +81,29 @@ This proves local DEV Git-driven reconciliation. Registry authentication, amd64/
 release integration, CI-to-GitOps image updates, production approvals, HA/SSO, and a
 failed-image release rollback are not claimed. The replica revert demonstrates
 configuration rollback. Stop after Phase 4; Phase 5 requires explicit approval.
+
+## Final GitHub and runtime verification
+
+[Application release 40251242073](https://github.com/prasanthece42/aegis-cicd/actions/runs/40251242073)
+passed on source commit `64c86de7490e1b0dac7d8b24510ac481347924b4`. Checks/dependency scan
+completed in 33 seconds, image validation in 58 seconds, and publication/digest
+verification in 34 seconds. Its [release receipt](releases/40251242073.json) was
+downloaded and all report checksums independently verified.
+
+GitOps setup/change/revert runs passed:
+[40250659921](https://github.com/prasanthece42/aegis-gitops/actions/runs/40250659921),
+[40250732778](https://github.com/prasanthece42/aegis-gitops/actions/runs/40250732778),
+and [40250770351](https://github.com/prasanthece42/aegis-gitops/actions/runs/40250770351).
+The final evidence-only GitOps documentation commit `284e2ec274daadd612b64398ed5d375fed5d5ddc`
+was also observed Synced/Healthy by Argo at one replica, with UID/security/HTTP checks passing.
+
+```bash
+git push origin main
+gh run watch 40251242073 --repo prasanthece42/aegis-cicd --exit-status --interval 15
+gh run download 40251242073 --repo prasanthece42/aegis-cicd --name release-evidence-40251242073-1 --dir /tmp/aegis-phase4-release-40251242073
+```
+
+The final report-only commit uses [skip ci] to record already completed validation;
+no source-code change is hidden by that marker. Both repositories are pushed and
+clean. There is no outstanding Phase 4 blocker. The local cluster and Argo remain
+running for inspection; temporary port-forwards are closed. Phase 5 has not started.

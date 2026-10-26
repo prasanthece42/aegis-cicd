@@ -75,5 +75,12 @@
     "No CI-to-GitOps image update or production promotion",
     "Persistent deploy key requires revocation on retirement",
     "Upstream Argo controller RBAC is broader than the AppProject boundary"
+  ],
+  "latest_verified_gitops_revision": "284e2ec274daadd612b64398ed5d375fed5d5ddc",
+  "application_ci_run": "https://github.com/prasanthece42/aegis-cicd/actions/runs/40251242073",
+  "gitops_ci_runs": [
+    "https://github.com/prasanthece42/aegis-gitops/actions/runs/40250659921",
+    "https://github.com/prasanthece42/aegis-gitops/actions/runs/40250732778",
+    "https://github.com/prasanthece42/aegis-gitops/actions/runs/40250770351"
   ]
 }
