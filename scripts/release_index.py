@@ -11,6 +11,8 @@ from pathlib import Path
 
 def validate_platforms(index, receipts, source_sha, source_repo):
     expected = {"linux/amd64", "linux/arm64"}
+    if index.get("mediaType") != "application/vnd.oci.image.index.v1+json":
+        raise ValueError("Release must use an OCI index to preserve its digest in the bundle")
     if set(receipts) != expected:
         raise ValueError("Both platform receipts are required")
     manifests = {

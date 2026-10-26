@@ -78,8 +78,15 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push the validated image and resolve its registry digest
         run: |
-          docker push "$IMAGE_TAG"
-          docker image inspect "$IMAGE_TAG" > reports/pushed-image.json
+          docker run --rm --user "$(id -u):$(id -g)" \
+            --volume "${DOCKER_CONFIG:-$HOME/.docker}/config.json:/auth.json:ro" \
+            --volume "$PWD/candidate:/in:ro" \
+            quay.io/skopeo/stable:v1.21.0@sha256:a585e4a3b8a045baa87c7f1b2f940d6d299ebede85ab3f2419d52d2264eefc93 \
+            copy --format oci --authfile /auth.json \
+            docker-archive:/in/image.tar "docker://$IMAGE_TAG"
+          digest=$(docker buildx imagetools inspect "$IMAGE_TAG" --format '{{.Manifest.Digest}}')
+          docker pull "$IMAGE_NAME@$digest"
+          docker image inspect "$IMAGE_NAME@$digest" > reports/pushed-image.json
           python3 scripts/release_evidence.py resolve-digest
       - name: Pull by digest and verify the exact runtime
         run: |

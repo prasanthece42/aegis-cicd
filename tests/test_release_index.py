@@ -9,6 +9,7 @@ from scripts.release_index import validate_platforms
 SHA = "a" * 40
 REPO = "prasanthece42/aegis-cicd"
 INDEX = {
+    "mediaType": "application/vnd.oci.image.index.v1+json",
     "digest": "sha256:" + "c" * 64,
     "manifests": [
         {"platform": {"os": "linux", "architecture": arch}, "digest": "sha256:" + char * 64}
