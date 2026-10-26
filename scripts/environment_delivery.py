@@ -78,7 +78,18 @@ def sync(environment):
         ]
         if not allowed:
             raise ValueError("PROD needs an independent current-head human approval")
-    patch = {"operation": {"sync": {"revision": revision, "prune": True}}}
+    application = get("application", APP[environment], "argocd")
+    policy = application["spec"].get("syncPolicy", {})
+    patch = {
+        "operation": {
+            "sync": {
+                "revision": revision,
+                "prune": True,
+                "syncOptions": policy.get("syncOptions", []),
+            },
+            "retry": policy.get("retry", {}),
+        }
+    }
     subprocess.run(
         KUBE
         + [
