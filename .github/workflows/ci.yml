@@ -5,6 +5,10 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
+      platforms:
+        description: JSON list of image architectures
+        type: string
+        default: '["amd64"]'
       export-candidate:
         description: Export the validated image for a trusted release caller
         type: boolean
@@ -60,20 +64,28 @@ jobs:
     name: Build, smoke-test, and scan container
     needs: checks
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ${{ fromJSON(inputs.platforms || '["amd64"]') }}
     env:
       IMAGE_TAG: aegis-sample:${{ github.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+        if: matrix.arch == 'arm64'
+        with:
+          platforms: arm64
       - name: Build commit-tagged image with source labels
         env:
           SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
           SOURCE_SHA: ${{ github.sha }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          docker build --tag "$IMAGE_TAG" \
+          docker build --platform "linux/${{ matrix.arch }}" --provenance=false --tag "$IMAGE_TAG" \
             --label "org.opencontainers.image.source=$SOURCE_URL" \
             --label "org.opencontainers.image.revision=$SOURCE_SHA" \
             --label "io.aegis.build.url=$RUN_URL" .
@@ -94,7 +106,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: image-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          name: image-reports-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: reports/*.json
           retention-days: 14
           if-no-files-found: warn
@@ -102,7 +114,7 @@ jobs:
         if: inputs.export-candidate && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          name: candidate-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: candidate/
           compression-level: 0
           retention-days: 1
