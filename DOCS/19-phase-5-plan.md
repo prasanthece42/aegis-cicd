@@ -12,7 +12,7 @@ an enforceable approval path exists. The user explicitly approved making both re
 passed Gitleaks v8.30.1 with redacted output and no detected leaks; local keys and
 kubeconfig remain ignored. Both visibility changes were then verified through GitHub.
 
-Current published images are amd64 only, while Kind is arm64. First extend release
+At the start of Phase 5, published images were amd64 only while Kind was arm64. Extend release
 validation to test and scan both platforms and publish one immutable OCI index. An
 exact OCI delivery bundle can transfer private registry content into the local cache
 without creating a persistent registry PAT. It must preserve registry digests.
@@ -22,15 +22,15 @@ No broad account token may be copied into repository secrets or the cluster.
 
 ## Acceptance checklist
 
-- [ ] Both image architectures are built, tested, scanned, and published by digest.
-- [ ] An OCI bundle's imported digest and actual runtime match release evidence.
-- [ ] A validated release produces a GitOps proposal without a persistent PAT.
-- [ ] DEV, STAGING, PROD reuse the same digest with explicit promotion sequencing.
-- [ ] Production approval is enforced; missing/stale/self approvals fail closed.
-- [ ] Argo policies differ by environment and production revisions are controlled.
-- [ ] Drift is observed and corrected through Argo reconciliation.
-- [ ] A real failed local release is diagnosed and restored by a Git change.
-- [ ] Local/GitHub results and unfulfilled external prerequisites are recorded accurately.
+- [x] Both image architectures are built, tested, scanned, and published by digest.
+- [x] An OCI bundle's imported digest and actual runtime match release evidence.
+- [x] A validated release produces a GitOps proposal without a persistent PAT.
+- [x] DEV, STAGING and human-approved PROD deployed the same digest with explicit promotion sequencing.
+- [x] Production approval is enforced; missing/stale/self approvals fail closed.
+- [x] Argo policies differ by environment and production revisions are controlled.
+- [x] Drift is observed and corrected through Argo reconciliation.
+- [x] A real failed local release is diagnosed and restored by a Git change.
+- [x] Local/GitHub results and unfulfilled external prerequisites are recorded accurately.
 
 No visibility change, paid upgrade, or production activation is inferred from elapsed
 time or a missing answer. Continue independent implementation and validation first.
@@ -42,3 +42,5 @@ It explicitly dispatches validation because bot-token PR creation does not trigg
 normal PR workflows. Promotion requires prior environment health recorded by an
 allowlisted workstation operator at the exact Git revision/digest. Argo never receives
 a GitHub write token; local observation uses the workstation's existing authentication.
+
+Implementation evidence and remaining approvals: [Phase 5 report](21-phase-5-report.md).

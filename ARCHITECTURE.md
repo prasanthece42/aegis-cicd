@@ -55,7 +55,7 @@ reference the published Phase 2 amd64 GHCR digest. An isolated kubeconfig/contex
 keeps operations on the named local Kind cluster. This Phase 3 bootstrap applied Helm from the workstation. Phase 4 below
 replaces ongoing manual deployment with Argo CD; CI never deploys application resources.
 
-## Current implementation — Phase 4 reconciliation
+## Historical Phase 4 reconciliation
 
 ```mermaid
 flowchart LR
@@ -71,25 +71,32 @@ Application. The chart is rendered with DEV and tracked local native-image value
 Real Git scaling, live drift repair, and Git revert were verified. Manual workstation
 Helm bootstrap is guarded after handoff. The original Helm release history is historical.
 
-## Target architecture — later release integration, not implemented
+## Current Phase 5 release management
 
 ```mermaid
 flowchart LR
-    Source[Application repository] --> CI[Checks and security scans]
-    CI --> Registry[GHCR image by digest]
-    Registry --> Update[GitOps change through GitHub App]
-    Update --> GitOps[Separate GitOps repository]
-    GitOps --> Argo[Argo CD reconciliation]
-    Argo --> K8s[Helm on Kind: DEV / STAGING / PROD]
+    Source[Application main] --> CI[Native amd64 + arm64 checks and scans]
+    CI --> Release[GHCR OCI index and public receipt/bundle]
+    Release --> Cache[Verified exact-image Kind cache]
+    Cache --> PR[GitOps DEV PR using repo GITHUB_TOKEN]
+    PR --> DEV[Required checks; merge; Argo automatic DEV]
+    DEV --> Stage[Healthy DEV; STAGING PR and manual Argo sync]
+    Stage --> Prod[Healthy STAGING; human-reviewed PROD PR and manual sync]
 ```
 
-Use two repositories: `aegis-cicd` for application source and workflows, and
-`aegis-gitops` for charts, environment values, and Argo CD Applications. The second repository is now implemented as a sibling checkout. CI must never directly deploy application
-resources with kubectl. Argo CD will own reconciliation. Phase 2 publishes unique commit/run tags and records digest references.
-Later deployment configuration must consume those digests.
+Both repositories are public following explicit approval and history credential scans.
+Argo reads public HTTPS without a repository credential; the former SSH deploy key was
+revoked. GHCR remains private. A workstation bridge verifies public release evidence,
+imports an exact digest-preserving OCI bundle into the local Kind cache, and dispatches
+the GitOps-owned proposal workflow. Background operation was explicitly approved and started.
 
-DEV will sync automatically; production desired-state changes will require reviewed
-GitOps pull requests and protected branches. Reverting a GitOps commit will request
-rollback through Argo CD. Git history links configuration changes to image digests.
-Cross-repository updates should use a narrowly installed GitHub App with short-lived
-tokens, not a long-lived personal access token.
+GitOps main, staging and prod are protected, including administrators. Required chart
+and trusted-main promotion policy checks enforce source release validation, exact digest
+reuse and fresh prior-environment health. Production requires an independent allowlisted
+human approval at the current PR head. DEV reconciles automatically; STAGING/PROD
+require explicit Argo sync. DEV, STAGING and PROD are verified; PROD PR #3 was independently approved at its
+exact head after explicit user authorization, merged with required checks, and synced. All namespaces are in local Kind, with no AWS provisioning.
+
+Health statuses are allowlisted operator observations with a 24-hour expiry, not signed
+runtime attestations. Source release evidence is unsigned. CI has no cluster credentials.
+See [the release guide](DOCS/20-release-management-guide.md) for code, commands and limits.
